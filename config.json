@@ -4,15 +4,6 @@
   "bio": "좋은 상품을 함께 나눠요 ✨\n쿠팡파트너스 활동을 통해\n일정액의 수수료를 제공받습니다.",
   "profileImage": "images/profile.jpg",
   "instagram": "https://www.instagram.com/itzyo_insight",
-  "links": [
-    {
-      "id": "link-1",
-      "type": "link",
-      "title": "쿠팡파트너스",
-      "desc": "인기상품",
-      "url": "https://link.coupang.com/a/eck9pg",
-      "thumbnail": "",
-      "enabled": true
-    }
-  ]
+  "coupangUrl": "https://link.coupang.com/a/ecEPYO",
+  "coupangDesc": ""
 }
