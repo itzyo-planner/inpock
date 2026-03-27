@@ -15,29 +15,21 @@
 
     <!-- 프로필 -->
     <div class="profile">
-      <!-- 프로필 사진: images/profile.jpg 파일을 추가하면 자동으로 표시됩니다 -->
       <div class="avatar" id="avatar">
-        <img
-          src="images/profile.jpg"
-          alt="itzyo 프로필 사진"
-          class="avatar-img"
-          onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';"
-        />
+        <img id="avatar-img" src="images/profile.jpg" alt="프로필 사진" class="avatar-img"
+          onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';" />
         <span id="avatar-fallback" class="avatar-fallback">잇</span>
       </div>
-      <h1 class="name">잇지요</h1>
-      <p class="handle">@itzyo</p>
-      <!-- 소개글: 아래 텍스트를 원하는 내용으로 변경하세요 -->
-      <p class="bio">
+      <h1 class="name" id="profile-name">잇지요</h1>
+      <p class="handle" id="profile-handle">@itzyo</p>
+      <p class="bio" id="profile-bio">
         좋은 상품을 함께 나눠요 ✨<br />
         쿠팡파트너스 활동을 통해<br />
         일정액의 수수료를 제공받을 수 있습니다.
       </p>
 
-      <!-- 소셜 아이콘 -->
       <div class="socials">
-        <!-- 인스타그램 링크: href의 URL을 변경하세요 -->
-        <a href="https://www.instagram.com/ziziingod" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+        <a id="instagram-link" href="https://www.instagram.com/ziziingod" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
           </svg>
@@ -47,9 +39,7 @@
 
     <!-- 링크 목록 -->
     <div class="links">
-
-      <!-- 쿠팡파트너스 링크: href의 URL을 실제 파트너스 링크로 변경하세요 -->
-      <a href="https://link.coupang.com/YOUR_LINK_HERE" target="_blank" rel="noopener noreferrer" class="link-card">
+      <a id="coupang-link" href="https://link.coupang.com/YOUR_LINK_HERE" target="_blank" rel="noopener noreferrer" class="link-card">
         <div class="link-icon red">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -57,16 +47,41 @@
         </div>
         <div class="link-text">
           <span class="link-title">쿠팡파트너스</span>
-          <span class="link-desc">추천 상품 모음</span>
+          <span class="link-desc" id="coupang-desc">추천 상품 모음</span>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="arrow">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </a>
-
     </div>
 
     <footer>© 2026 itzyo · 잇지요</footer>
   </main>
+
+  <script>
+    // config.json에서 최신 설정을 불러와 화면에 적용합니다
+    (async () => {
+      try {
+        const res = await fetch('./config.json?t=' + Date.now());
+        if (!res.ok) return;
+        const c = await res.json();
+
+        if (c.name) document.getElementById('profile-name').textContent = c.name;
+        if (c.handle) document.getElementById('profile-handle').textContent = c.handle;
+        if (c.bio) document.getElementById('profile-bio').innerHTML = c.bio.replace(/\n/g, '<br>');
+        if (c.instagram) document.getElementById('instagram-link').href = c.instagram;
+        if (c.coupangUrl) document.getElementById('coupang-link').href = c.coupangUrl;
+        if (c.coupangDesc) document.getElementById('coupang-desc').textContent = c.coupangDesc;
+        if (c.profileImage) {
+          const img = document.getElementById('avatar-img');
+          img.src = c.profileImage + '?t=' + Date.now();
+          img.style.display = 'block';
+          document.getElementById('avatar-fallback').style.display = 'none';
+        }
+      } catch (e) {
+        // config 로드 실패 시 기본값 유지
+      }
+    })();
+  </script>
 </body>
 </html>
