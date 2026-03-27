@@ -15,10 +15,24 @@
 
     <!-- 프로필 -->
     <div class="profile">
-      <div class="avatar">잇</div>
+      <!-- 프로필 사진: images/profile.jpg 파일을 추가하면 자동으로 표시됩니다 -->
+      <div class="avatar" id="avatar">
+        <img
+          src="images/profile.jpg"
+          alt="itzyo 프로필 사진"
+          class="avatar-img"
+          onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';"
+        />
+        <span id="avatar-fallback" class="avatar-fallback">잇</span>
+      </div>
       <h1 class="name">잇지요</h1>
       <p class="handle">@itzyo</p>
-      <p class="bio">좋은 상품을 함께 나눠요 ✨</p>
+      <!-- 소개글: 아래 텍스트를 원하는 내용으로 변경하세요 -->
+      <p class="bio">
+        좋은 상품을 함께 나눠요 ✨<br />
+        쿠팡파트너스 활동을 통해<br />
+        일정액의 수수료를 제공받을 수 있습니다.
+      </p>
 
       <!-- 소셜 아이콘 -->
       <div class="socials">
