@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 const links = [
   {
     id: 1,
