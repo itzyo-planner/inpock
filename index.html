@@ -75,29 +75,27 @@
           document.getElementById('avatar-fallback').style.display = 'none';
         }
 
-        // 링크 배열 렌더링
+        // 링크 배열 렌더링 (항상 컨테이너 교체)
         if (Array.isArray(c.links)) {
           const container = document.getElementById('links-container');
           const enabled = c.links.filter(l => l.enabled !== false);
-          if (enabled.length > 0) {
-            container.innerHTML = enabled.map(link => {
-              if (link.type === 'text') {
-                return `<div class="text-block">${(link.title || '').replace(/\n/g, '<br>')}</div>`;
-              }
-              const thumb = link.thumbnail
-                ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
-                : '';
-              return `
-                <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
-                  ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
-                  <div class="link-text">
-                    <span class="link-title">${link.title || ''}</span>
-                    ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
-                  </div>
-                  ${ARROW_SVG}
-                </a>`;
-            }).join('');
-          }
+          container.innerHTML = enabled.map(link => {
+            if (link.type === 'text') {
+              return `<div class="text-block">${(link.title || '').replace(/\n/g, '<br>')}</div>`;
+            }
+            const thumb = link.thumbnail
+              ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
+              : '';
+            return `
+              <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
+                ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
+                <div class="link-text">
+                  <span class="link-title">${link.title || ''}</span>
+                  ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
+                </div>
+                ${ARROW_SVG}
+              </a>`;
+          }).join('');
         }
       } catch (e) { /* 기본값 유지 */ }
     })();

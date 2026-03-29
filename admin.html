@@ -526,25 +526,73 @@
       const container = document.getElementById('link-list');
       const id = 'link-' + Date.now() + '-' + Math.random().toString(36).slice(2);
       const enabled = link.enabled !== false;
+
       const div = document.createElement('div');
       div.className = 'link-item';
       div.dataset.id = id;
-      div.innerHTML = `
-        <div class="link-item-header">
-          <div class="link-type-badge link-type-link">🔗</div>
-          <div class="link-item-title" id="title-preview-${id}">${link.title || '새 링크'}</div>
-          <label class="toggle">
-            <input type="checkbox" ${enabled ? 'checked' : ''} />
-            <span class="toggle-slider"></span>
-          </label>
-          <button class="link-delete-btn" onclick="removeLinkItem(this)" title="삭제">✕</button>
-        </div>
-        <div class="link-item-body">
-          <input type="text" placeholder="타이틀" value="${link.title || ''}"
-            oninput="document.getElementById('title-preview-${id}').textContent = this.value || '새 링크'" />
-          <input type="text" placeholder="설명 (선택)" value="${link.desc || ''}" />
-          <input type="url" placeholder="https://..." value="${link.url || ''}" />
-        </div>`;
+
+      // 헤더
+      const header = document.createElement('div');
+      header.className = 'link-item-header';
+
+      const badge = document.createElement('div');
+      badge.className = 'link-type-badge link-type-link';
+      badge.textContent = '🔗';
+
+      const titlePreview = document.createElement('div');
+      titlePreview.className = 'link-item-title';
+      titlePreview.id = 'title-preview-' + id;
+      titlePreview.textContent = link.title || '새 링크';
+
+      const toggleLabel = document.createElement('label');
+      toggleLabel.className = 'toggle';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = enabled;
+      const slider = document.createElement('span');
+      slider.className = 'toggle-slider';
+      toggleLabel.appendChild(checkbox);
+      toggleLabel.appendChild(slider);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'link-delete-btn';
+      delBtn.title = '삭제';
+      delBtn.textContent = '✕';
+      delBtn.onclick = function() { removeLinkItem(this); };
+
+      header.appendChild(badge);
+      header.appendChild(titlePreview);
+      header.appendChild(toggleLabel);
+      header.appendChild(delBtn);
+
+      // 바디 (입력 필드)
+      const body = document.createElement('div');
+      body.className = 'link-item-body';
+
+      const titleInput = document.createElement('input');
+      titleInput.type = 'text';
+      titleInput.placeholder = '타이틀';
+      titleInput.value = link.title || '';
+      titleInput.oninput = function() {
+        titlePreview.textContent = this.value || '새 링크';
+      };
+
+      const descInput = document.createElement('input');
+      descInput.type = 'text';
+      descInput.placeholder = '설명 (선택)';
+      descInput.value = link.desc || '';
+
+      const urlInput = document.createElement('input');
+      urlInput.type = 'url';
+      urlInput.placeholder = 'https://...';
+      urlInput.value = link.url || '';
+
+      body.appendChild(titleInput);
+      body.appendChild(descInput);
+      body.appendChild(urlInput);
+
+      div.appendChild(header);
+      div.appendChild(body);
       container.appendChild(div);
     }
 
