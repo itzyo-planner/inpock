@@ -5,5 +5,13 @@
   "profileImage": "images/profile.jpg",
   "instagram": "https://www.instagram.com/itzyo_insight",
   "coupangUrl": "https://link.coupang.com/a/ecEPYO",
-  "coupangDesc": ""
+  "coupangDesc": "",
+  "links": [
+    {
+      "title": "쿠팡파트너스",
+      "desc": "추천 상품 모음",
+      "url": "https://link.coupang.com/a/ecEPYO",
+      "enabled": true
+    }
+  ]
 }
