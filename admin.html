@@ -121,6 +121,62 @@
       border-radius: 20px; font-weight: 600; vertical-align: middle; margin-left: 6px;
     }
     .badge-green { background: #dcfce7; color: #16a34a; }
+
+    /* 링크 목록 */
+    .link-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .link-item {
+      background: #f9fafb; border: 1.5px solid #e5e7eb;
+      border-radius: 14px; overflow: hidden;
+    }
+    .link-item-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+    }
+    .link-type-badge {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .link-type-link { background: #fb923c; }
+    .link-type-text { background: #22c55e; }
+    .link-item-title { flex: 1; font-size: 0.88rem; font-weight: 600; color: #111827; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toggle {
+      position: relative; width: 40px; height: 22px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: #d1d5db; border-radius: 22px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-slider:before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%; background: white;
+      left: 3px; top: 3px; transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle input:checked + .toggle-slider { background: #fb923c; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+    .link-delete-btn {
+      background: none; border: none; color: #d1d5db; cursor: pointer;
+      font-size: 1.1rem; padding: 4px; border-radius: 6px; flex-shrink: 0;
+      transition: color 0.2s;
+    }
+    .link-delete-btn:hover { color: #ef4444; }
+    .link-item-body { padding: 0 14px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .link-item-body input {
+      width: 100%; padding: 9px 12px;
+      border: 1.5px solid #e5e7eb; border-radius: 8px;
+      font-size: 0.83rem; font-family: inherit; color: #111827;
+      outline: none; background: white; transition: border-color 0.2s;
+    }
+    .link-item-body input:focus { border-color: #fb923c; }
+    .btn-add-link {
+      width: 100%; padding: 11px; border: 1.5px dashed #fb923c;
+      border-radius: 10px; background: #fff7ed; color: #fb923c;
+      font-size: 0.88rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-add-link:hover { background: #ffedd5; }
   </style>
 </head>
 <body>
@@ -198,14 +254,19 @@
 
       <hr class="divider" />
 
-      <!-- 링크 -->
-      <div class="section-title">링크</div>
+      <!-- 소셜 -->
+      <div class="section-title">소셜</div>
       <label>인스타그램 URL</label>
       <input type="url" id="field-instagram" placeholder="https://www.instagram.com/계정명" />
-      <label>쿠팡파트너스 URL</label>
-      <input type="url" id="field-coupang" placeholder="https://link.coupang.com/..." />
-      <label>쿠팡파트너스 설명</label>
-      <input type="text" id="field-coupang-desc" placeholder="추천 상품 모음" />
+
+      <hr class="divider" />
+
+      <!-- 링크 목록 -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div class="section-title" style="margin-bottom:0;">링크 목록</div>
+      </div>
+      <div class="link-list" id="link-list"></div>
+      <button class="btn-add-link" onclick="addLinkItem()">+ 링크 추가</button>
 
       <div id="save-error" class="error-msg"></div>
       <div id="save-success" class="success-msg"></div>
@@ -292,11 +353,15 @@
         configSha = data.sha;
         const c = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
 
-        document.getElementById('field-name').value         = c.name        || '';
-        document.getElementById('field-bio').value          = c.bio         || '';
-        document.getElementById('field-instagram').value    = c.instagram   || '';
-        document.getElementById('field-coupang').value      = c.coupangUrl  || '';
-        document.getElementById('field-coupang-desc').value = c.coupangDesc || '';
+        document.getElementById('field-name').value      = c.name      || '';
+        document.getElementById('field-bio').value       = c.bio       || '';
+        document.getElementById('field-instagram').value = c.instagram || '';
+
+        // 링크 목록 렌더링
+        const links = Array.isArray(c.links) ? c.links : (
+          c.coupangUrl ? [{ title: '쿠팡파트너스', desc: c.coupangDesc || '추천 상품 모음', url: c.coupangUrl, enabled: true }] : []
+        );
+        renderLinks(links);
 
         document.getElementById('preview-name').textContent   = c.name   || '잇지요';
         document.getElementById('preview-handle').textContent = c.handle || '@itzyo';
@@ -405,13 +470,12 @@
 
         // 2. config.json 업데이트
         const config = {
-          name:        document.getElementById('field-name').value.trim(),
-          handle:      '@itzyo',
-          bio:         document.getElementById('field-bio').value,
+          name:         document.getElementById('field-name').value.trim(),
+          handle:       '@itzyo',
+          bio:          document.getElementById('field-bio').value,
           profileImage: IMAGE_PATH,
-          instagram:   document.getElementById('field-instagram').value.trim(),
-          coupangUrl:  document.getElementById('field-coupang').value.trim(),
-          coupangDesc: document.getElementById('field-coupang-desc').value.trim(),
+          instagram:    document.getElementById('field-instagram').value.trim(),
+          links:        collectLinks(),
         };
 
         const jsonStr   = JSON.stringify(config, null, 2);
@@ -449,6 +513,61 @@
         btn.disabled = false;
         btn.innerHTML = '저장하기 (자동 배포)';
       }
+    }
+
+    // ── 링크 목록 ──
+    function renderLinks(links) {
+      const container = document.getElementById('link-list');
+      container.innerHTML = '';
+      links.forEach((link, i) => appendLinkItem(link, i));
+    }
+
+    function appendLinkItem(link = {}, index) {
+      const container = document.getElementById('link-list');
+      const id = 'link-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      const enabled = link.enabled !== false;
+      const div = document.createElement('div');
+      div.className = 'link-item';
+      div.dataset.id = id;
+      div.innerHTML = `
+        <div class="link-item-header">
+          <div class="link-type-badge link-type-link">🔗</div>
+          <div class="link-item-title" id="title-preview-${id}">${link.title || '새 링크'}</div>
+          <label class="toggle">
+            <input type="checkbox" ${enabled ? 'checked' : ''} />
+            <span class="toggle-slider"></span>
+          </label>
+          <button class="link-delete-btn" onclick="removeLinkItem(this)" title="삭제">✕</button>
+        </div>
+        <div class="link-item-body">
+          <input type="text" placeholder="타이틀" value="${link.title || ''}"
+            oninput="document.getElementById('title-preview-${id}').textContent = this.value || '새 링크'" />
+          <input type="text" placeholder="설명 (선택)" value="${link.desc || ''}" />
+          <input type="url" placeholder="https://..." value="${link.url || ''}" />
+        </div>`;
+      container.appendChild(div);
+    }
+
+    function addLinkItem() {
+      appendLinkItem({});
+    }
+
+    function removeLinkItem(btn) {
+      btn.closest('.link-item').remove();
+    }
+
+    function collectLinks() {
+      const items = document.querySelectorAll('#link-list .link-item');
+      return Array.from(items).map(item => {
+        const inputs = item.querySelectorAll('input[type="text"], input[type="url"]');
+        const toggle = item.querySelector('input[type="checkbox"]');
+        return {
+          title:   inputs[0]?.value.trim() || '',
+          desc:    inputs[1]?.value.trim() || '',
+          url:     inputs[2]?.value.trim() || '',
+          enabled: toggle?.checked ?? true,
+        };
+      }).filter(l => l.url || l.title);
     }
 
     // ── 로그아웃 / 토큰 재설정 ──
