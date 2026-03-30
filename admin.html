@@ -177,6 +177,15 @@
       cursor: pointer; transition: background 0.2s;
     }
     .btn-add-link:hover { background: #ffedd5; }
+    .thumb-preview {
+      width: 56px; height: 56px; border-radius: 8px;
+      background: #e5e7eb; overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: #9ca3af;
+    }
+    .thumb-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-row { display: flex; gap: 8px; align-items: center; }
+    .thumb-row input { flex: 1; }
   </style>
 </head>
 <body>
@@ -587,9 +596,49 @@
       urlInput.placeholder = 'https://...';
       urlInput.value = link.url || '';
 
+      // 썸네일
+      const thumbRow = document.createElement('div');
+      thumbRow.className = 'thumb-row';
+
+      const thumbPreview = document.createElement('div');
+      thumbPreview.className = 'thumb-preview';
+
+      const thumbImg = document.createElement('img');
+      thumbImg.style.display = 'none';
+      thumbImg.onerror = function() { this.style.display = 'none'; thumbPreview.textContent = '🖼'; };
+      thumbPreview.appendChild(thumbImg);
+      if (!link.thumbnail) thumbPreview.textContent = '🖼';
+
+      const thumbInput = document.createElement('input');
+      thumbInput.type = 'url';
+      thumbInput.placeholder = '썸네일 URL (선택)';
+      thumbInput.value = link.thumbnail || '';
+      thumbInput.oninput = function() {
+        const v = this.value.trim();
+        if (v) {
+          thumbPreview.textContent = '';
+          thumbImg.src = v;
+          thumbImg.style.display = 'block';
+        } else {
+          thumbImg.style.display = 'none';
+          thumbPreview.textContent = '🖼';
+        }
+      };
+
+      // 초기 썸네일 미리보기
+      if (link.thumbnail) {
+        thumbPreview.textContent = '';
+        thumbImg.src = link.thumbnail;
+        thumbImg.style.display = 'block';
+      }
+
+      thumbRow.appendChild(thumbPreview);
+      thumbRow.appendChild(thumbInput);
+
       body.appendChild(titleInput);
       body.appendChild(descInput);
       body.appendChild(urlInput);
+      body.appendChild(thumbRow);
 
       div.appendChild(header);
       div.appendChild(body);
@@ -607,14 +656,19 @@
     function collectLinks() {
       const items = document.querySelectorAll('#link-list .link-item');
       return Array.from(items).map(item => {
-        const inputs = item.querySelectorAll('input[type="text"], input[type="url"]');
+        const body = item.querySelector('.link-item-body');
+        const allInputs = body.querySelectorAll('input');
+        // 순서: title(text), desc(text), url(url), thumbnail(url)
         const toggle = item.querySelector('input[type="checkbox"]');
-        return {
-          title:   inputs[0]?.value.trim() || '',
-          desc:    inputs[1]?.value.trim() || '',
-          url:     inputs[2]?.value.trim() || '',
+        const obj = {
+          title:   allInputs[0]?.value.trim() || '',
+          desc:    allInputs[1]?.value.trim() || '',
+          url:     allInputs[2]?.value.trim() || '',
           enabled: toggle?.checked ?? true,
         };
+        const thumb = allInputs[3]?.value.trim();
+        if (thumb) obj.thumbnail = thumb;
+        return obj;
       }).filter(l => l.url || l.title);
     }
 
