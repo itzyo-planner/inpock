@@ -55,6 +55,16 @@
       "enabled": true,
       "category": "뷰티",
       "num": 4
+    },
+    {
+      "id": "link-1779980692863",
+      "type": "link",
+      "title": "",
+      "desc": "",
+      "url": "",
+      "thumbnail": "",
+      "enabled": true,
+      "num": 5
     }
   ]
 }
