@@ -47,9 +47,10 @@
     .prof-av img { width: 100%; height: 100%; object-fit: cover; }
     .prof-name { font-size: 0.95rem; font-weight: 700; color: #111827; }
     .prof-url { font-size: 0.78rem; color: #9ca3af; margin-top: 2px; }
-    .stats-row { display: flex; gap: 12px; font-size: 0.78rem; color: #6b7280; flex-wrap: wrap; }
+    .stats-row { display: flex; gap: 12px; font-size: 0.78rem; color: #6b7280; flex-wrap: wrap; align-items: center; }
     .stats-row b { color: #111827; }
     .stats-sep { color: #d1d5db; }
+    .stat-ga-btn { padding: 2px 8px; border-radius: 6px; border: 1px solid #fb923c; background: #fff7ed; color: #fb923c; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; }
 
     /* 탭 */
     .tab-bar { display: flex; border-bottom: 1px solid #f0f0f0; }
@@ -254,11 +255,10 @@
       </div>
     </div>
     <div class="stats-row">
-      <span>실시간 <b>0</b></span>
-      <span>오늘 <b>0</b></span>
-      <span>전체 <b>0</b></span>
-      <span class="stats-sep">|</span>
-      <span>소식받기 <b>0</b></span>
+      <span>실시간 <b id="stat-realtime">—</b></span>
+      <span>오늘 <b id="stat-today">—</b></span>
+      <span>전체 <b id="stat-total">—</b></span>
+      <button id="stat-ga-btn" class="stat-ga-btn" onclick="connectGAHeader()" style="display:none">GA 연결</button>
     </div>
   </div>
 
@@ -272,10 +272,14 @@
   <div class="tab-panel" id="tab-stats">
     <!-- 설정 입력 -->
     <div id="st-setup">
-      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">GA4 속성 ID를 입력하면<br>아래 버튼으로 통계 페이지를 바로 열 수 있어요.</p>
+      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">속성 ID 입력 시 하단 버튼으로 GA4 페이지 바로 열기,<br>클라이언트 ID까지 입력 시 헤더에 실시간 수치 표시</p>
       <div class="dp-label">GA4 속성 ID <span style="font-weight:400;color:#9ca3af">(숫자만)</span></div>
       <input class="dp-input" id="st-prop-id" type="text" placeholder="예: 123456789" oninput="updateStatsLinks()" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 16px">GA4 → 관리(톱니바퀴) → 속성 설정 → 속성 ID</div>
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">GA4 → 관리(톱니바퀴) → 속성 설정 → 속성 ID</div>
+      <div class="dp-label">OAuth 클라이언트 ID <span style="font-weight:400;color:#9ca3af">(실시간 수치용)</span></div>
+      <input class="dp-input" id="st-client-id" type="text" placeholder="xxx.apps.googleusercontent.com" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Google Cloud Console → OAuth 2.0 클라이언트 ID</div>
+      <button class="dp-save-btn" onclick="saveStatsSettings()" style="margin-bottom:12px">설정 저장</button>
 
       <div style="display:flex;flex-direction:column;gap:8px" id="st-links">
         <a id="lnk-realtime" href="https://analytics.google.com/analytics/web/" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center">
@@ -470,6 +474,7 @@
     document.getElementById('block-list').innerHTML =
       '<div class="bl-empty">불러오는 중...</div>';
     await fetchConfig();
+    initHeaderStats();
   }
 
   async function fetchConfig() {
@@ -874,10 +879,23 @@
   // ════════════════════════════════════════
   // 통계 (GA4)
   // ════════════════════════════════════════
+  // ── 통계 탭 ──────────────────────────────
   function initStatsTab() {
-    const propId = localStorage.getItem('ga_prop_id') || '';
-    document.getElementById('st-prop-id').value = propId;
+    const propId   = localStorage.getItem('ga_prop_id')   || '';
+    const clientId = localStorage.getItem('ga_client_id') || '';
+    document.getElementById('st-prop-id').value   = propId;
+    document.getElementById('st-client-id').value = clientId;
     updateStatsLinks();
+  }
+
+  function saveStatsSettings() {
+    const propId   = document.getElementById('st-prop-id').value.trim().replace(/\D/g,'');
+    const clientId = document.getElementById('st-client-id').value.trim();
+    if (propId)   localStorage.setItem('ga_prop_id',   propId);
+    if (clientId) localStorage.setItem('ga_client_id', clientId);
+    updateStatsLinks();
+    initHeaderStats();
+    alert('저장됐습니다.');
   }
 
   function updateStatsLinks() {
@@ -888,6 +906,74 @@
     document.getElementById('lnk-realtime').href = base + 'reports/realtime-overview';
     document.getElementById('lnk-overview').href = base + 'reports/reportinghub';
     document.getElementById('lnk-events').href   = base + 'reports/lifecycle/engagement-events';
+  }
+
+  // ── 헤더 실시간 GA4 통계 ─────────────────
+  let _hToken = null;
+  let _hTimer = null;
+
+  function initHeaderStats() {
+    const propId   = localStorage.getItem('ga_prop_id');
+    const clientId = localStorage.getItem('ga_client_id');
+    if (!propId || !clientId) return;
+    document.getElementById('stat-ga-btn').style.display = 'inline-block';
+    _loadGISHeader(clientId);
+  }
+
+  function _loadGISHeader(clientId) {
+    if (window.google?.accounts?.oauth2) { _initHTokenClient(clientId); return; }
+    if (document.querySelector('script[src*="accounts.google.com/gsi"]')) return;
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = () => _initHTokenClient(clientId);
+    document.head.appendChild(s);
+  }
+
+  function _initHTokenClient(clientId) {
+    window._hTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: 'https://www.googleapis.com/auth/analytics.readonly',
+      callback: async (resp) => {
+        if (resp.error) return;
+        _hToken = resp.access_token;
+        document.getElementById('stat-ga-btn').style.display = 'none';
+        await _fetchHeaderStats();
+        clearInterval(_hTimer);
+        _hTimer = setInterval(_fetchHeaderStats, 60000);
+      }
+    });
+  }
+
+  function connectGAHeader() {
+    if (!window._hTokenClient) { alert('통계 탭에서 설정을 먼저 저장해주세요.'); return; }
+    window._hTokenClient.requestAccessToken();
+  }
+
+  async function _fetchHeaderStats() {
+    const propId = localStorage.getItem('ga_prop_id');
+    if (!propId || !_hToken) return;
+    try {
+      const [rtRes, todayRes, totalRes] = await Promise.all([
+        _gaH(propId, 'runRealtimeReport', { metrics: [{name:'activeUsers'}] }),
+        _gaH(propId, 'runReport', { dateRanges:[{startDate:'today',endDate:'today'}], metrics:[{name:'activeUsers'}] }),
+        _gaH(propId, 'runReport', { dateRanges:[{startDate:'2020-01-01',endDate:'today'}], metrics:[{name:'activeUsers'}] }),
+      ]);
+      document.getElementById('stat-realtime').textContent = rtRes?.totals?.[0]?.metricValues?.[0]?.value ?? rtRes?.rows?.[0]?.metricValues?.[0]?.value ?? '0';
+      document.getElementById('stat-today').textContent    = todayRes?.totals?.[0]?.metricValues?.[0]?.value ?? '0';
+      document.getElementById('stat-total').textContent    = totalRes?.totals?.[0]?.metricValues?.[0]?.value ?? '0';
+    } catch(e) {
+      if (e.status === 401) { _hToken = null; document.getElementById('stat-ga-btn').style.display = 'inline-block'; }
+    }
+  }
+
+  async function _gaH(propId, method, body) {
+    const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propId}:${method}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${_hToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) { const err = new Error(); err.status = r.status; throw err; }
+    return r.json();
   }
 
   // ════════════════════════════════════════
