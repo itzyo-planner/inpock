@@ -202,7 +202,6 @@
         if (c.name)      document.getElementById('profile-name').textContent = c.name;
         if (c.handle)    document.getElementById('profile-handle').textContent = c.handle;
         if (c.bio)       document.getElementById('profile-bio').innerHTML = c.bio.replace(/\n/g, '<br>');
-        if (c.instagram) document.getElementById('instagram-link').href = c.instagram;
         if (c.profileImage) {
           const img = document.getElementById('avatar-img');
           img.src = c.profileImage + '?t=' + Date.now();

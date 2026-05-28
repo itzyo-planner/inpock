@@ -255,10 +255,9 @@
       </div>
     </div>
     <div class="stats-row">
-      <span>실시간 <b id="stat-realtime">—</b></span>
+      <span>1시간 <b id="stat-realtime">—</b></span>
       <span>오늘 <b id="stat-today">—</b></span>
       <span>전체 <b id="stat-total">—</b></span>
-      <button id="stat-ga-btn" class="stat-ga-btn" onclick="connectGAHeader()" style="display:none">GA 연결</button>
     </div>
   </div>
 
@@ -270,32 +269,45 @@
 
   <!-- 통계 패널 -->
   <div class="tab-panel" id="tab-stats">
-    <!-- 설정 입력 -->
     <div id="st-setup">
-      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">속성 ID 입력 시 하단 버튼으로 GA4 페이지 바로 열기,<br>클라이언트 ID까지 입력 시 헤더에 실시간 수치 표시</p>
-      <div class="dp-label">GA4 속성 ID <span style="font-weight:400;color:#9ca3af">(숫자만)</span></div>
-      <input class="dp-input" id="st-prop-id" type="text" placeholder="예: 123456789" oninput="updateStatsLinks()" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">GA4 → 관리(톱니바퀴) → 속성 설정 → 속성 ID</div>
-      <div class="dp-label">OAuth 클라이언트 ID <span style="font-weight:400;color:#9ca3af">(실시간 수치용)</span></div>
-      <input class="dp-input" id="st-client-id" type="text" placeholder="xxx.apps.googleusercontent.com" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Google Cloud Console → OAuth 2.0 클라이언트 ID</div>
-      <button class="dp-save-btn" onclick="saveStatsSettings()" style="margin-bottom:12px">설정 저장</button>
+      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">
+        Cloudflare Web Analytics 연결로 방문자 통계를 확인하세요.<br>
+        Cloudflare 대시보드에서 사이트를 등록한 뒤 아래에 입력하세요.
+      </p>
+      <div class="dp-label">Account ID</div>
+      <input class="dp-input" id="cf-account-id" type="text" placeholder="32자리 영문숫자" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Cloudflare 대시보드 오른쪽 사이드바 → Account ID</div>
+      <div class="dp-label">Site Tag</div>
+      <input class="dp-input" id="cf-site-tag" type="text" placeholder="Web Analytics 사이트 태그 (32자리)" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Analytics → Web Analytics → 사이트 선택 → 설정 → Site Tag</div>
+      <div class="dp-label">API Token</div>
+      <input class="dp-input" id="cf-api-token" type="password" placeholder="Account Analytics: Read 권한 필요" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">내 프로필 → API Tokens → Create Token → Account Analytics: Read</div>
+      <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px">설정 저장 및 연결</button>
 
-      <div style="display:flex;flex-direction:column;gap:8px" id="st-links">
-        <a id="lnk-realtime" href="https://analytics.google.com/analytics/web/" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center">
-          🟢 실시간 방문자 보기
-        </a>
-        <a id="lnk-overview" href="https://analytics.google.com/analytics/web/" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#6366f1,#8b5cf6)">
-          📈 방문자 통계 보기
-        </a>
-        <a id="lnk-events" href="https://analytics.google.com/analytics/web/" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#fb923c,#f472b6)">
-          🔗 링크 클릭 통계 보기
-        </a>
+      <div class="st-grid" id="cf-stat-cards" style="display:none">
+        <div class="st-card">
+          <div class="st-card-title">지난 1시간</div>
+          <div class="st-card-num" id="cf-stat-hour">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
+        <div class="st-card">
+          <div class="st-card-title">오늘</div>
+          <div class="st-card-num" id="cf-stat-today">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
+        <div class="st-card">
+          <div class="st-card-title">전체</div>
+          <div class="st-card-num" id="cf-stat-total">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
       </div>
+      <button class="st-refresh-btn" id="cf-refresh-btn" onclick="fetchCFStats()" style="display:none">🔄 통계 새로고침</button>
 
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6">
-        <div style="font-size:0.75rem;font-weight:600;color:#6b7280;margin-bottom:8px">직접 주소로 이동</div>
-        <a href="https://analytics.google.com" target="_blank" style="font-size:0.8rem;color:#4285f4;text-decoration:none">analytics.google.com 열기 →</a>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#f6821f,#fbad41)">
+          📊 Cloudflare Analytics 대시보드 열기
+        </a>
       </div>
     </div>
   </div>
@@ -474,7 +486,7 @@
     document.getElementById('block-list').innerHTML =
       '<div class="bl-empty">불러오는 중...</div>';
     await fetchConfig();
-    initHeaderStats();
+    initCFStats();
   }
 
   async function fetchConfig() {
@@ -877,103 +889,96 @@
   }
 
   // ════════════════════════════════════════
-  // 통계 (GA4)
+  // 통계 (Cloudflare Analytics)
   // ════════════════════════════════════════
-  // ── 통계 탭 ──────────────────────────────
   function initStatsTab() {
-    const propId   = localStorage.getItem('ga_prop_id')   || '';
-    const clientId = localStorage.getItem('ga_client_id') || '';
-    document.getElementById('st-prop-id').value   = propId;
-    document.getElementById('st-client-id').value = clientId;
-    updateStatsLinks();
-  }
-
-  function saveStatsSettings() {
-    const propId   = document.getElementById('st-prop-id').value.trim().replace(/\D/g,'');
-    const clientId = document.getElementById('st-client-id').value.trim();
-    if (propId)   localStorage.setItem('ga_prop_id',   propId);
-    if (clientId) localStorage.setItem('ga_client_id', clientId);
-    updateStatsLinks();
-    initHeaderStats();
-    alert('저장됐습니다.');
-  }
-
-  function updateStatsLinks() {
-    const raw    = document.getElementById('st-prop-id').value.trim().replace(/\D/g, '');
-    if (raw) localStorage.setItem('ga_prop_id', raw);
-    const propId = raw || localStorage.getItem('ga_prop_id') || '';
-    const base   = 'https://analytics.google.com/analytics/web/#/' + (propId ? `p${propId}/` : '');
-    document.getElementById('lnk-realtime').href = base + 'reports/realtime-overview';
-    document.getElementById('lnk-overview').href = base + 'reports/reportinghub';
-    document.getElementById('lnk-events').href   = base + 'reports/lifecycle/engagement-events';
-  }
-
-  // ── 헤더 실시간 GA4 통계 ─────────────────
-  let _hToken = null;
-  let _hTimer = null;
-
-  function initHeaderStats() {
-    const propId   = localStorage.getItem('ga_prop_id');
-    const clientId = localStorage.getItem('ga_client_id');
-    if (!propId || !clientId) return;
-    document.getElementById('stat-ga-btn').style.display = 'inline-block';
-    _loadGISHeader(clientId);
-  }
-
-  function _loadGISHeader(clientId) {
-    if (window.google?.accounts?.oauth2) { _initHTokenClient(clientId); return; }
-    if (document.querySelector('script[src*="accounts.google.com/gsi"]')) return;
-    const s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = () => _initHTokenClient(clientId);
-    document.head.appendChild(s);
-  }
-
-  function _initHTokenClient(clientId) {
-    window._hTokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: clientId,
-      scope: 'https://www.googleapis.com/auth/analytics.readonly',
-      callback: async (resp) => {
-        if (resp.error) return;
-        _hToken = resp.access_token;
-        document.getElementById('stat-ga-btn').style.display = 'none';
-        await _fetchHeaderStats();
-        clearInterval(_hTimer);
-        _hTimer = setInterval(_fetchHeaderStats, 60000);
-      }
-    });
-  }
-
-  function connectGAHeader() {
-    if (!window._hTokenClient) { alert('통계 탭에서 설정을 먼저 저장해주세요.'); return; }
-    window._hTokenClient.requestAccessToken();
-  }
-
-  async function _fetchHeaderStats() {
-    const propId = localStorage.getItem('ga_prop_id');
-    if (!propId || !_hToken) return;
-    try {
-      const [rtRes, todayRes, totalRes] = await Promise.all([
-        _gaH(propId, 'runRealtimeReport', { metrics: [{name:'activeUsers'}] }),
-        _gaH(propId, 'runReport', { dateRanges:[{startDate:'today',endDate:'today'}], metrics:[{name:'activeUsers'}] }),
-        _gaH(propId, 'runReport', { dateRanges:[{startDate:'2020-01-01',endDate:'today'}], metrics:[{name:'activeUsers'}] }),
-      ]);
-      document.getElementById('stat-realtime').textContent = rtRes?.totals?.[0]?.metricValues?.[0]?.value ?? rtRes?.rows?.[0]?.metricValues?.[0]?.value ?? '0';
-      document.getElementById('stat-today').textContent    = todayRes?.totals?.[0]?.metricValues?.[0]?.value ?? '0';
-      document.getElementById('stat-total').textContent    = totalRes?.totals?.[0]?.metricValues?.[0]?.value ?? '0';
-    } catch(e) {
-      if (e.status === 401) { _hToken = null; document.getElementById('stat-ga-btn').style.display = 'inline-block'; }
+    document.getElementById('cf-account-id').value = localStorage.getItem('cf_account_id') || '';
+    document.getElementById('cf-site-tag').value   = localStorage.getItem('cf_site_tag')   || '';
+    document.getElementById('cf-api-token').value  = localStorage.getItem('cf_api_token')  || '';
+    if (localStorage.getItem('cf_api_token') && localStorage.getItem('cf_site_tag')) {
+      document.getElementById('cf-stat-cards').style.display = 'grid';
+      document.getElementById('cf-refresh-btn').style.display = 'block';
+      fetchCFStats();
     }
   }
 
-  async function _gaH(propId, method, body) {
-    const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propId}:${method}`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${_hToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!r.ok) { const err = new Error(); err.status = r.status; throw err; }
-    return r.json();
+  function saveCFSettings() {
+    const accountId = document.getElementById('cf-account-id').value.trim();
+    const siteTag   = document.getElementById('cf-site-tag').value.trim();
+    const apiToken  = document.getElementById('cf-api-token').value.trim();
+    if (accountId) localStorage.setItem('cf_account_id', accountId);
+    if (siteTag)   localStorage.setItem('cf_site_tag',   siteTag);
+    if (apiToken)  localStorage.setItem('cf_api_token',  apiToken);
+    if (apiToken && siteTag) {
+      document.getElementById('cf-stat-cards').style.display = 'grid';
+      document.getElementById('cf-refresh-btn').style.display = 'block';
+      fetchCFStats();
+    }
+    alert('저장됐습니다.');
+  }
+
+  async function fetchCFStats() {
+    const accountId = localStorage.getItem('cf_account_id');
+    const siteTag   = localStorage.getItem('cf_site_tag');
+    const apiToken  = localStorage.getItem('cf_api_token');
+    if (!accountId || !siteTag || !apiToken) return;
+
+    const now        = new Date();
+    const hourAgo    = new Date(now - 3600000).toISOString();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const allStart   = '2024-01-01T00:00:00Z';
+
+    const query = `{
+      viewer {
+        accounts(filter: {accountTag: "${accountId}"}) {
+          hourVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${hourAgo}"}]}
+            limit: 1
+          ) { sum { visits } }
+          todayVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${todayStart}"}]}
+            limit: 1
+          ) { sum { visits } }
+          totalVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${allStart}"}]}
+            limit: 1
+          ) { sum { visits } }
+        }
+      }
+    }`;
+
+    try {
+      const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+      const data = await res.json();
+      if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL 오류');
+      const acct = data?.data?.viewer?.accounts?.[0];
+      if (!acct) throw new Error('계정 데이터 없음');
+
+      const hourV  = acct.hourVisits?.[0]?.sum?.visits  ?? 0;
+      const todayV = acct.todayVisits?.[0]?.sum?.visits ?? 0;
+      const totalV = acct.totalVisits?.[0]?.sum?.visits ?? 0;
+
+      const fmt = n => n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
+      document.getElementById('cf-stat-hour').textContent  = fmt(hourV);
+      document.getElementById('cf-stat-today').textContent = fmt(todayV);
+      document.getElementById('cf-stat-total').textContent = fmt(totalV);
+      document.getElementById('stat-realtime').textContent = fmt(hourV);
+      document.getElementById('stat-today').textContent    = fmt(todayV);
+      document.getElementById('stat-total').textContent    = fmt(totalV);
+    } catch(e) {
+      console.error('CF stats 오류:', e.message);
+    }
+  }
+
+  function initCFStats() {
+    const apiToken = localStorage.getItem('cf_api_token');
+    const siteTag  = localStorage.getItem('cf_site_tag');
+    if (!apiToken || !siteTag) return;
+    fetchCFStats();
   }
 
   // ════════════════════════════════════════
