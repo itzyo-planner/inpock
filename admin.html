@@ -429,6 +429,13 @@
         `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_PATH}?ref=${GITHUB_BRANCH}`,
         { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
       );
+      if (res.status === 401) {
+        localStorage.removeItem('gh_token');
+        showScreen('token');
+        document.getElementById('token-err').textContent = '토큰이 만료됐거나 권한이 없습니다. 새 토큰을 입력해주세요.';
+        document.getElementById('token-err').style.display = 'block';
+        return;
+      }
       if (!res.ok) throw new Error(`GitHub API 오류 (${res.status})`);
       const data = await res.json();
       if (!data.content) throw new Error('config.json을 찾을 수 없습니다');
