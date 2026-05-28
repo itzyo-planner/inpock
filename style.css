@@ -114,6 +114,21 @@ body {
   gap: 12px;
 }
 
+.link-num {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fb923c;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-right: 4px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .link-card {
   display: flex;
   align-items: center;

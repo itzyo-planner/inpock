@@ -14,42 +14,46 @@
       "category": ""
     },
     {
-      "title": "1.민트 칫솔",
+      "title": "민트 칫솔",
       "desc": "콜게이트(Colgate)의 일회용 미니 치약 칫솔",
       "url": "https://link.coupang.com/a/eewkfw",
       "enabled": true,
       "thumbnail": "images/thumb-link-1774879095154-p24kkzz5s.png",
       "id": "link-1779968447061-1",
-      "category": "생활용품"
+      "category": "생활용품",
+      "num": 1
     },
     {
-      "title": "2.모자 관리기",
+      "title": "모자 관리기",
       "desc": "가정용 다기능 스팀 모자 관리기",
       "url": "https://link.coupang.com/a/eeDJn0",
       "enabled": true,
       "thumbnail": "images/thumb-link-1774879095154-100et27vjlx.png",
       "id": "link-1779968447061-2",
-      "category": "생활용품"
+      "category": "생활용품",
+      "num": 2
     },
     {
       "id": "link-1779970501018",
       "type": "link",
-      "title": "3.츠루리 포어 클렌징 젤",
+      "title": "츠루리 포어 클렌징 젤",
       "desc": "브러시가 붙어있어 손 안 대고 코 피지 싹 녹이는 프리미엄 모공 치트키",
       "url": "https://link.coupang.com/a/dYuiwYHXhY",
       "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/vendor_inventory/5533/361527c0fdae93eb5faba31a29b456e72bfc55e1f5c3b6031d3fa31021f2.JPG",
       "enabled": true,
-      "category": ""
+      "category": "",
+      "num": 3
     },
     {
       "id": "link-1779970910784",
       "type": "link",
-      "title": "4.이하다 약용 페이스 프로텍트 파우더",
+      "title": "이하다 약용 페이스 프로텍트 파우더",
       "desc": "피부 장벽 보호하면서 유분기 싹 잡아주는 프리미엄 일본 대란 파우더",
       "url": "https://link.coupang.com/a/dYuHem7Ch2",
       "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/ff98/59d88f7675fabe63a9c72ebc0d918c56bbabe82259bbd7e2a38d33ba39ee.jpg",
       "enabled": true,
-      "category": ""
+      "category": "",
+      "num": 4
     }
   ]
 }

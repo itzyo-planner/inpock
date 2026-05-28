@@ -81,7 +81,7 @@
         <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
           ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
           <div class="link-text">
-            <span class="link-title">${link.title || ''}</span>
+            <span class="link-title">${link.num ? `<span class="link-num">#${link.num}</span>` : ''}${link.title || ''}</span>
             ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
           </div>
           ${ARROW_SVG}
@@ -108,7 +108,7 @@
       const filtered = allLinks.filter(l => {
         if (l.enabled === false) return false;
         if (activeCategory !== '전체' && l.category !== activeCategory) return false;
-        if (q && !(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q)) return false;
+        if (q && !(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q) && String(l.num||'') !== q.trim()) return false;
         return true;
       });
       const container = document.getElementById('links-container');
