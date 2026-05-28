@@ -66,6 +66,24 @@
     const LINK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>`;
     const ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="arrow"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`;
 
+    function loadGA(id) {
+      if (!id) return;
+      const s = document.createElement('script');
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      s.async = true;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function() { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', id);
+    }
+
+    function trackClick(num, title) {
+      if (window.gtag) {
+        gtag('event', 'link_click', { product_num: num, product_title: title });
+      }
+    }
+
     let allLinks = [];
     let activeCategory = '전체';
     let searchQuery = '';
@@ -78,7 +96,7 @@
         ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
         : '';
       return `
-        <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
+        <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card" onclick="trackClick(${link.num||0},'${(link.title||'').replace(/'/g,"\\'")}')">
           ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
           <div class="link-text">
             <span class="link-title">${link.num ? `<span class="link-num">#${link.num}</span>` : ''}${link.title || ''}</span>
@@ -144,6 +162,8 @@
           img.style.display = 'block';
           document.getElementById('avatar-fallback').style.display = 'none';
         }
+
+        if (c.ga_id) loadGA(c.ga_id);
 
         if (Array.isArray(c.links)) {
           allLinks = c.links;

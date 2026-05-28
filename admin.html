@@ -279,6 +279,9 @@
     <textarea class="dp-input" id="dp-bio" placeholder="소개글 (줄바꿈 가능)"></textarea>
     <div class="dp-label">인스타그램 URL</div>
     <input class="dp-input" type="url" id="dp-instagram" placeholder="https://www.instagram.com/계정명" />
+    <div class="dp-label" style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6;">📊 구글 애널리틱스 (GA4)</div>
+    <input class="dp-input" type="text" id="dp-ga-id" placeholder="G-XXXXXXXXXX" />
+    <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">analytics.google.com에서 측정 ID를 발급받아 입력하세요</div>
     <button class="dp-save-btn" onclick="applyDesign()">디자인 적용 (저장 필요)</button>
   </div>
 
@@ -769,9 +772,10 @@
   // 디자인 탭
   // ════════════════════════════════════════
   function populateDesignTab() {
-    document.getElementById('dp-name').value      = config.name      || '';
-    document.getElementById('dp-bio').value       = config.bio       || '';
-    document.getElementById('dp-instagram').value = config.instagram || '';
+    document.getElementById('dp-name').value      = config.name            || '';
+    document.getElementById('dp-bio').value       = config.bio             || '';
+    document.getElementById('dp-instagram').value = config.instagram       || '';
+    document.getElementById('dp-ga-id').value     = config.ga_id           || '';
     if (config.profileImage) {
       const prev = document.getElementById('dp-av-preview');
       if (prev) {
@@ -798,6 +802,7 @@
     config.name      = document.getElementById('dp-name').value.trim();
     config.bio       = document.getElementById('dp-bio').value;
     config.instagram = document.getElementById('dp-instagram').value.trim();
+    config.ga_id     = document.getElementById('dp-ga-id').value.trim();
     document.getElementById('prof-name').textContent = config.name || 'itzyo';
     markUnsaved();
     alert('디자인이 적용됐습니다. 저장 버튼을 눌러 배포하세요.');
