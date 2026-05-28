@@ -346,7 +346,7 @@
   const GITHUB_BRANCH  = "claude/push-changes-QmMYl";
   const CONFIG_PATH    = "config.json";
   const IMAGE_PATH     = "images/profile.jpg";
-  const OG_WORKER_URL  = "";  // ← Cloudflare Worker 배포 후 URL 입력 (예: https://og-fetcher.yourname.workers.dev)
+  const OG_WORKER_URL  = "";  // 비워두면 무료 공개 프록시 자동 사용 (설정 불필요)
 
   // ════════════════════════════════════════
   // 상태
@@ -689,10 +689,6 @@
   }
 
   async function fetchOgImage(event) {
-    if (!OG_WORKER_URL) {
-      alert('Worker URL이 설정되지 않았습니다.\nadmin.html의 OG_WORKER_URL 상수를 채워주세요.');
-      return;
-    }
     const urlInput = document.getElementById('es-url');
     const linkUrl = urlInput?.value.trim();
     if (!linkUrl) { alert('먼저 링크 URL을 입력해주세요.'); return; }
@@ -701,11 +697,24 @@
     btn.textContent = '불러오는 중...';
     btn.disabled = true;
     try {
-      const res = await fetch(`${OG_WORKER_URL}?url=${encodeURIComponent(linkUrl)}`);
-      const data = await res.json();
-      if (data.image) {
-        document.getElementById('es-thumb-url').value = data.image;
-        previewThumb(data.image);
+      let image = null;
+      if (OG_WORKER_URL) {
+        const res = await fetch(`${OG_WORKER_URL}?url=${encodeURIComponent(linkUrl)}`);
+        const data = await res.json();
+        image = data.image || null;
+      } else {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(linkUrl)}`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        const html = data.contents || '';
+        const m = html.match(/property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
+                || html.match(/content=["']([^"']+)["'][^>]*property=["']og:image["']/i)
+                || html.match(/name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+        image = m ? m[1] : null;
+      }
+      if (image) {
+        document.getElementById('es-thumb-url').value = image;
+        previewThumb(image);
       } else {
         alert('썸네일 이미지를 찾을 수 없습니다.\n직접 URL을 입력하거나 파일을 업로드해주세요.');
       }
