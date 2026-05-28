@@ -97,13 +97,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ec4899;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .social-btn:hover {
-  background: #fdf2f8;
+  background: #f3f4f6;
+  transform: translateY(-1px);
 }
 
 /* 링크 카드 */

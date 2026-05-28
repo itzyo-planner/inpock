@@ -310,8 +310,18 @@
     <input class="dp-input" type="text" id="dp-name" placeholder="잇지요" />
     <div class="dp-label">소개글</div>
     <textarea class="dp-input" id="dp-bio" placeholder="소개글 (줄바꿈 가능)"></textarea>
-    <div class="dp-label">인스타그램 URL</div>
+    <div class="dp-label" style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6;">소셜 링크 <span style="font-weight:400;color:#9ca3af">(비워두면 표시 안 됨)</span></div>
+    <div style="font-size:0.72rem;color:#9ca3af;margin-bottom:8px">각 2개까지 입력 가능</div>
+    <div class="dp-label" style="margin-top:0">📸 인스타그램</div>
     <input class="dp-input" type="url" id="dp-instagram" placeholder="https://www.instagram.com/계정명" />
+    <div class="dp-label">🧵 스레드 1</div>
+    <input class="dp-input" type="url" id="dp-threads" placeholder="https://www.threads.net/@계정명" />
+    <div class="dp-label">🧵 스레드 2</div>
+    <input class="dp-input" type="url" id="dp-threads2" placeholder="https://www.threads.net/@계정명" />
+    <div class="dp-label">▶️ 유튜브 1</div>
+    <input class="dp-input" type="url" id="dp-youtube" placeholder="https://www.youtube.com/@채널명" />
+    <div class="dp-label">▶️ 유튜브 2</div>
+    <input class="dp-input" type="url" id="dp-youtube2" placeholder="https://www.youtube.com/@채널명" />
     <div class="dp-label" style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6;">📊 구글 애널리틱스 (GA4)</div>
     <input class="dp-input" type="text" id="dp-ga-id" placeholder="G-XXXXXXXXXX" />
     <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">analytics.google.com에서 측정 ID를 발급받아 입력하세요</div>
@@ -805,10 +815,14 @@
   // 디자인 탭
   // ════════════════════════════════════════
   function populateDesignTab() {
-    document.getElementById('dp-name').value      = config.name            || '';
-    document.getElementById('dp-bio').value       = config.bio             || '';
-    document.getElementById('dp-instagram').value = config.instagram       || '';
-    document.getElementById('dp-ga-id').value     = config.ga_id           || '';
+    document.getElementById('dp-name').value      = config.name      || '';
+    document.getElementById('dp-bio').value       = config.bio       || '';
+    document.getElementById('dp-instagram').value = config.instagram || '';
+    document.getElementById('dp-threads').value   = config.threads   || '';
+    document.getElementById('dp-threads2').value  = config.threads2  || '';
+    document.getElementById('dp-youtube').value   = config.youtube   || '';
+    document.getElementById('dp-youtube2').value  = config.youtube2  || '';
+    document.getElementById('dp-ga-id').value     = config.ga_id     || '';
     if (config.profileImage) {
       const prev = document.getElementById('dp-av-preview');
       if (prev) {
@@ -835,6 +849,10 @@
     config.name      = document.getElementById('dp-name').value.trim();
     config.bio       = document.getElementById('dp-bio').value;
     config.instagram = document.getElementById('dp-instagram').value.trim();
+    config.threads   = document.getElementById('dp-threads').value.trim();
+    config.threads2  = document.getElementById('dp-threads2').value.trim();
+    config.youtube   = document.getElementById('dp-youtube').value.trim();
+    config.youtube2  = document.getElementById('dp-youtube2').value.trim();
     config.ga_id     = document.getElementById('dp-ga-id').value.trim();
     document.getElementById('prof-name').textContent = config.name || 'itzyo';
     markUnsaved();
