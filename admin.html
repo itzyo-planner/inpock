@@ -643,6 +643,8 @@
         <input class="es-input" type="url" id="es-url" placeholder="https://..." value="${escHtml(link.url||'')}" /></div>
         <div><label class="es-label">설명 (선택)</label>
         <input class="es-input" type="text" id="es-desc" placeholder="설명" value="${escHtml(link.desc||'')}" /></div>
+        <div><label class="es-label">카테고리 (선택)</label>
+        <input class="es-input" type="text" id="es-category" placeholder="예: 생활용품, 뷰티, 주방..." value="${escHtml(link.category||'')}" /></div>
         <div><label class="es-label">썸네일</label>
         <div class="es-thumb-row">
           <div class="es-thumb-preview" id="es-thumb-preview">
@@ -680,6 +682,7 @@
       link.title     = document.getElementById('es-title-input')?.value.trim() || '';
       link.url       = document.getElementById('es-url')?.value.trim() || '';
       link.desc      = document.getElementById('es-desc')?.value.trim() || '';
+      link.category  = document.getElementById('es-category')?.value.trim() || '';
       link.thumbnail = document.getElementById('es-thumb-url')?.value.trim() || '';
     }
 

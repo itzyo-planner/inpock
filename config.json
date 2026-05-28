@@ -10,7 +10,8 @@
       "desc": "추천 상품 모음",
       "url": "https://link.coupang.com/a/ecEPYO",
       "enabled": true,
-      "id": "link-1779968447061-0"
+      "id": "link-1779968447061-0",
+      "category": ""
     },
     {
       "title": "1.민트 칫솔",
@@ -18,7 +19,8 @@
       "url": "https://link.coupang.com/a/eewkfw",
       "enabled": true,
       "thumbnail": "images/thumb-link-1774879095154-p24kkzz5s.png",
-      "id": "link-1779968447061-1"
+      "id": "link-1779968447061-1",
+      "category": "생활용품"
     },
     {
       "title": "2.모자 관리기",
@@ -26,7 +28,8 @@
       "url": "https://link.coupang.com/a/eeDJn0",
       "enabled": true,
       "thumbnail": "images/thumb-link-1774879095154-100et27vjlx.png",
-      "id": "link-1779968447061-2"
+      "id": "link-1779968447061-2",
+      "category": "생활용품"
     },
     {
       "id": "link-1779970501018",
@@ -35,7 +38,8 @@
       "desc": "브러시가 붙어있어 손 안 대고 코 피지 싹 녹이는 프리미엄 모공 치트키",
       "url": "https://link.coupang.com/a/dYuiwYHXhY",
       "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/vendor_inventory/5533/361527c0fdae93eb5faba31a29b456e72bfc55e1f5c3b6031d3fa31021f2.JPG",
-      "enabled": true
+      "enabled": true,
+      "category": ""
     },
     {
       "id": "link-1779970910784",
@@ -44,7 +48,8 @@
       "desc": "피부 장벽 보호하면서 유분기 싹 잡아주는 프리미엄 일본 대란 파우더",
       "url": "https://link.coupang.com/a/dYuHem7Ch2",
       "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/ff98/59d88f7675fabe63a9c72ebc0d918c56bbabe82259bbd7e2a38d33ba39ee.jpg",
-      "enabled": true
+      "enabled": true,
+      "category": ""
     }
   ]
 }

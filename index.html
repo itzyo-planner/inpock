@@ -34,8 +34,16 @@
       </div>
     </div>
 
+    <div class="filter-wrap" id="filter-wrap" style="display:none">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" id="search-input" placeholder="상품 검색..." oninput="onSearch(this.value)" />
+      </div>
+      <div class="cat-tabs" id="cat-tabs"></div>
+    </div>
+
     <div class="links" id="links-container">
-      <a id="coupang-link" href="https://link.coupang.com/YOUR_LINK_HERE" target="_blank" rel="noopener noreferrer" class="link-card">
+      <a href="https://link.coupang.com/a/ecEPYO" target="_blank" rel="noopener noreferrer" class="link-card">
         <div class="link-icon red">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -58,15 +66,77 @@
     const LINK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>`;
     const ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="arrow"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`;
 
+    let allLinks = [];
+    let activeCategory = '전체';
+    let searchQuery = '';
+
+    function linkCardHTML(link) {
+      if (link.type === 'text') {
+        return `<div class="text-block">${(link.title || '').replace(/\n/g, '<br>')}</div>`;
+      }
+      const thumb = link.thumbnail
+        ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
+        : '';
+      return `
+        <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
+          ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
+          <div class="link-text">
+            <span class="link-title">${link.title || ''}</span>
+            ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
+          </div>
+          ${ARROW_SVG}
+        </a>`;
+    }
+
+    function getCategories() {
+      const cats = [];
+      allLinks.forEach(l => { if (l.category && !cats.includes(l.category)) cats.push(l.category); });
+      return cats;
+    }
+
+    function renderCategoryTabs() {
+      const cats = getCategories();
+      if (cats.length === 0) { document.getElementById('cat-tabs').innerHTML = ''; return; }
+      const all = ['전체', ...cats];
+      document.getElementById('cat-tabs').innerHTML = all.map(cat =>
+        `<button class="cat-tab${cat === activeCategory ? ' active' : ''}" onclick="setCategory('${cat}')">${cat}</button>`
+      ).join('');
+    }
+
+    function renderFiltered() {
+      const q = searchQuery.toLowerCase();
+      const filtered = allLinks.filter(l => {
+        if (l.enabled === false) return false;
+        if (activeCategory !== '전체' && l.category !== activeCategory) return false;
+        if (q && !(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q)) return false;
+        return true;
+      });
+      const container = document.getElementById('links-container');
+      container.innerHTML = filtered.length
+        ? filtered.map(linkCardHTML).join('')
+        : '<div class="no-result">검색 결과가 없습니다 🔍</div>';
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      renderCategoryTabs();
+      renderFiltered();
+    }
+
+    function onSearch(val) {
+      searchQuery = val;
+      renderFiltered();
+    }
+
     (async () => {
       try {
         const res = await fetch('./config.json?t=' + Date.now());
         if (!res.ok) return;
         const c = await res.json();
 
-        if (c.name)    document.getElementById('profile-name').textContent = c.name;
-        if (c.handle)  document.getElementById('profile-handle').textContent = c.handle;
-        if (c.bio)     document.getElementById('profile-bio').innerHTML = c.bio.replace(/\n/g, '<br>');
+        if (c.name)      document.getElementById('profile-name').textContent = c.name;
+        if (c.handle)    document.getElementById('profile-handle').textContent = c.handle;
+        if (c.bio)       document.getElementById('profile-bio').innerHTML = c.bio.replace(/\n/g, '<br>');
         if (c.instagram) document.getElementById('instagram-link').href = c.instagram;
         if (c.profileImage) {
           const img = document.getElementById('avatar-img');
@@ -75,27 +145,13 @@
           document.getElementById('avatar-fallback').style.display = 'none';
         }
 
-        // 링크 배열 렌더링 (항상 컨테이너 교체)
         if (Array.isArray(c.links)) {
-          const container = document.getElementById('links-container');
-          const enabled = c.links.filter(l => l.enabled !== false);
-          container.innerHTML = enabled.map(link => {
-            if (link.type === 'text') {
-              return `<div class="text-block">${(link.title || '').replace(/\n/g, '<br>')}</div>`;
-            }
-            const thumb = link.thumbnail
-              ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
-              : '';
-            return `
-              <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card">
-                ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon red">${LINK_ICON_SVG}</div>`}
-                <div class="link-text">
-                  <span class="link-title">${link.title || ''}</span>
-                  ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
-                </div>
-                ${ARROW_SVG}
-              </a>`;
-          }).join('');
+          allLinks = c.links;
+          const hasCats = c.links.some(l => l.category);
+          document.getElementById('filter-wrap').style.display = hasCats ? 'flex' : 'block';
+          if (!hasCats) document.getElementById('cat-tabs').style.display = 'none';
+          renderCategoryTabs();
+          renderFiltered();
         }
       } catch (e) { /* 기본값 유지 */ }
     })();
