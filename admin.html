@@ -59,7 +59,17 @@
     .tab-panel.open { display: block; }
 
     /* 디자인 탭 입력 */
-    .dp-label { font-size: 0.78rem; font-weight: 600; color: #6b7280; margin-bottom: 5px; margin-top: 12px; }
+    .st-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .st-card { background: white; border-radius: 10px; border: 1px solid #f3f4f6; padding: 12px 10px; text-align: center; }
+    .st-card-title { font-size: 0.7rem; font-weight: 600; color: #9ca3af; margin-bottom: 4px; }
+    .st-card-num { font-size: 1.45rem; font-weight: 700; color: #111827; line-height: 1.2; }
+    .st-card-unit { font-size: 0.7rem; color: #9ca3af; }
+    .st-wide { background: white; border-radius: 10px; border: 1px solid #f3f4f6; padding: 14px 16px; margin-bottom: 10px; }
+    .st-wide-title { font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 8px; }
+    .st-wide-num { font-size: 1.5rem; font-weight: 700; color: #111827; }
+    .st-connect-btn { width: 100%; padding: 13px; border: none; border-radius: 10px; background: linear-gradient(135deg,#4285f4,#34a853); color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .st-refresh-btn { width: 100%; padding: 9px; border: 1.5px solid #e5e7eb; border-radius: 8px; background: white; color: #6b7280; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 10px; }
+    .st-reset-btn { width: 100%; padding: 7px; border: none; background: none; color: #9ca3af; font-size: 0.75rem; cursor: pointer; font-family: inherit; }
     .dp-label:first-child { margin-top: 0; }
     .dp-input { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.88rem; font-family: inherit; outline: none; background: white; transition: border-color 0.2s; }
     .dp-input:focus { border-color: #fb923c; }
@@ -260,7 +270,39 @@
 
   <!-- 통계 패널 -->
   <div class="tab-panel" id="tab-stats">
-    <p style="font-size:0.85rem;color:#9ca3af;text-align:center;padding:16px 0;">통계 기능을 준비 중입니다.</p>
+    <!-- 설정 입력 -->
+    <div id="st-setup">
+      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:12px">GA4 통계를 여기서 바로 보려면<br>아래 정보를 한 번만 입력하면 됩니다.</p>
+      <div class="dp-label">GA4 속성 ID <span style="font-weight:400;color:#9ca3af">(숫자만)</span></div>
+      <input class="dp-input" id="st-prop-id" type="text" placeholder="예: 123456789" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">GA4 → 관리 → 속성 설정 → 속성 ID</div>
+      <div class="dp-label">OAuth 클라이언트 ID</div>
+      <input class="dp-input" id="st-client-id" type="text" placeholder="xxx.apps.googleusercontent.com" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Google Cloud Console에서 발급 (아래 안내 참고)</div>
+      <button class="dp-save-btn" onclick="saveStatsSettings()" style="margin-top:4px">설정 저장</button>
+      <details style="margin-top:14px">
+        <summary style="font-size:0.78rem;color:#6b7280;cursor:pointer;font-weight:600">📋 OAuth 클라이언트 ID 발급 방법</summary>
+        <ol style="font-size:0.75rem;color:#6b7280;line-height:2;padding-left:18px;margin-top:8px">
+          <li>console.cloud.google.com 접속</li>
+          <li>프로젝트 선택 또는 새 프로젝트 만들기</li>
+          <li>API 및 서비스 → 라이브러리 → "Google Analytics Data API" 사용 설정</li>
+          <li>사용자 인증 정보 → 사용자 인증 정보 만들기 → OAuth 클라이언트 ID</li>
+          <li>유형: 웹 애플리케이션</li>
+          <li>승인된 자바스크립트 원본에 사이트 주소 추가</li>
+          <li>클라이언트 ID 복사하여 위에 붙여넣기</li>
+        </ol>
+      </details>
+    </div>
+    <!-- 연결 버튼 -->
+    <div id="st-connect" style="display:none">
+      <button class="st-connect-btn" onclick="connectGA()">🔗 구글 계정으로 통계 보기</button>
+    </div>
+    <!-- 통계 데이터 -->
+    <div id="st-data" style="display:none">
+      <div id="st-content"><p style="text-align:center;color:#9ca3af;padding:20px">불러오는 중...</p></div>
+      <button class="st-refresh-btn" onclick="refreshStats()">🔄 새로고침</button>
+      <button class="st-reset-btn" onclick="resetStatsSettings()">설정 초기화</button>
+    </div>
   </div>
 
   <!-- 디자인 패널 -->
@@ -817,7 +859,139 @@
     const isOpen = panel.classList.contains('open');
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('open'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if (!isOpen) { panel.classList.add('open'); btn.classList.add('active'); }
+    if (!isOpen) { panel.classList.add('open'); btn.classList.add('active'); if (name === 'stats') initStatsTab(); }
+  }
+
+  // ════════════════════════════════════════
+  // 통계 (GA4)
+  // ════════════════════════════════════════
+  let _gaToken = null;
+
+  function initStatsTab() {
+    const propId   = localStorage.getItem('ga_prop_id');
+    const clientId = localStorage.getItem('ga_client_id');
+    if (propId)   document.getElementById('st-prop-id').value   = propId;
+    if (clientId) document.getElementById('st-client-id').value = clientId;
+    if (propId && clientId) {
+      document.getElementById('st-connect').style.display = 'block';
+      loadGIS(clientId);
+    }
+  }
+
+  function saveStatsSettings() {
+    const propId   = document.getElementById('st-prop-id').value.trim().replace(/\D/g,'');
+    const clientId = document.getElementById('st-client-id').value.trim();
+    if (!propId)   { alert('속성 ID를 입력해주세요. (숫자만)'); return; }
+    if (!clientId) { alert('OAuth 클라이언트 ID를 입력해주세요.'); return; }
+    localStorage.setItem('ga_prop_id',   propId);
+    localStorage.setItem('ga_client_id', clientId);
+    document.getElementById('st-connect').style.display = 'block';
+    loadGIS(clientId);
+    alert('저장됐습니다. 아래 버튼으로 구글 계정에 연결하세요.');
+  }
+
+  function loadGIS(clientId) {
+    if (window.google?.accounts?.oauth2) { initTokenClient(clientId); return; }
+    if (document.querySelector('script[src*="accounts.google.com/gsi"]')) return;
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = () => initTokenClient(clientId);
+    document.head.appendChild(s);
+  }
+
+  function initTokenClient(clientId) {
+    window._gaTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: 'https://www.googleapis.com/auth/analytics.readonly',
+      callback: async (resp) => {
+        if (resp.error) { alert('구글 연결 실패: ' + resp.error); return; }
+        _gaToken = resp.access_token;
+        await fetchGA4Stats();
+      }
+    });
+  }
+
+  function connectGA() {
+    if (!window._gaTokenClient) { alert('설정을 먼저 저장해주세요.'); return; }
+    window._gaTokenClient.requestAccessToken();
+  }
+
+  async function fetchGA4Stats() {
+    const propId = localStorage.getItem('ga_prop_id');
+    document.getElementById('st-setup').style.display   = 'none';
+    document.getElementById('st-connect').style.display = 'none';
+    document.getElementById('st-data').style.display    = 'block';
+    document.getElementById('st-content').innerHTML = '<p style="text-align:center;color:#9ca3af;padding:20px">불러오는 중...</p>';
+    try {
+      const [visitRes, clickRes] = await Promise.all([
+        gaReport(propId, {
+          dateRanges: [
+            {startDate: 'today',      endDate: 'today'},
+            {startDate: '7daysAgo',   endDate: 'today'},
+            {startDate: '30daysAgo',  endDate: 'today'},
+          ],
+          metrics: [{name: 'activeUsers'}, {name: 'sessions'}]
+        }),
+        gaReport(propId, {
+          dateRanges: [{startDate: '30daysAgo', endDate: 'today'}],
+          metrics: [{name: 'eventCount'}],
+          dimensionFilter: {filter: {fieldName: 'eventName', stringFilter: {value: 'link_click', matchType: 'EXACT'}}}
+        })
+      ]);
+      const totals = visitRes.totals || [];
+      const todayU  = totals[0]?.metricValues?.[0]?.value || '0';
+      const weekU   = totals[1]?.metricValues?.[0]?.value || '0';
+      const monthU  = totals[2]?.metricValues?.[0]?.value || '0';
+      const todayS  = totals[0]?.metricValues?.[1]?.value || '0';
+      const clicks  = clickRes.totals?.[0]?.metricValues?.[0]?.value || '0';
+      renderGA4Stats(todayU, todayS, weekU, monthU, clicks);
+    } catch(e) {
+      document.getElementById('st-content').innerHTML =
+        `<p style="color:#ef4444;font-size:0.83rem;text-align:center;padding:16px">오류: ${e.message}<br><span style="color:#9ca3af;font-size:0.75rem">속성 ID를 다시 확인해주세요</span></p>`;
+      document.getElementById('st-connect').style.display = 'block';
+    }
+  }
+
+  async function gaReport(propId, body) {
+    const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propId}:runReport`, {
+      method: 'POST',
+      headers: {'Authorization': `Bearer ${_gaToken}`, 'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    if (r.status === 401) { _gaToken = null; throw new Error('토큰 만료. 다시 연결해주세요.'); }
+    if (!r.ok) throw new Error(`GA API 오류 (${r.status})`);
+    return r.json();
+  }
+
+  function renderGA4Stats(todayU, todayS, weekU, monthU, clicks) {
+    document.getElementById('st-content').innerHTML = `
+      <div class="st-grid">
+        <div class="st-card"><div class="st-card-title">오늘</div><div class="st-card-num">${Number(todayU).toLocaleString()}</div><div class="st-card-unit">방문자</div></div>
+        <div class="st-card"><div class="st-card-title">7일</div><div class="st-card-num">${Number(weekU).toLocaleString()}</div><div class="st-card-unit">방문자</div></div>
+        <div class="st-card"><div class="st-card-title">30일</div><div class="st-card-num">${Number(monthU).toLocaleString()}</div><div class="st-card-unit">방문자</div></div>
+      </div>
+      <div class="st-grid" style="grid-template-columns:1fr 1fr">
+        <div class="st-card"><div class="st-card-title">오늘 세션</div><div class="st-card-num">${Number(todayS).toLocaleString()}</div><div class="st-card-unit">세션</div></div>
+        <div class="st-card"><div class="st-card-title">링크 클릭 (30일)</div><div class="st-card-num">${Number(clicks).toLocaleString()}</div><div class="st-card-unit">회</div></div>
+      </div>
+      <p style="font-size:0.72rem;color:#9ca3af;text-align:center;margin-top:4px">상품별 클릭 수: GA4 → 이벤트 → link_click</p>`;
+  }
+
+  async function refreshStats() {
+    if (!_gaToken) { connectGA(); return; }
+    await fetchGA4Stats();
+  }
+
+  function resetStatsSettings() {
+    if (!confirm('설정을 초기화할까요?')) return;
+    localStorage.removeItem('ga_prop_id');
+    localStorage.removeItem('ga_client_id');
+    _gaToken = null;
+    document.getElementById('st-prop-id').value   = '';
+    document.getElementById('st-client-id').value = '';
+    document.getElementById('st-setup').style.display   = 'block';
+    document.getElementById('st-connect').style.display = 'none';
+    document.getElementById('st-data').style.display    = 'none';
   }
 
   // ════════════════════════════════════════
