@@ -1,0 +1,45 @@
+{
+  "name": "잇지요 레시피",
+  "handle": "@itzyo_recipe",
+  "bio": "맛있는 레시피와 주방 꿀템 소개 🍳\n쿠팡파트너스 활동을 통해\n일정액의 수수료를 제공받습니다.",
+  "profileImage": "images/profile.jpg",
+  "instagram": "",
+  "ga_id": "",
+  "links": [
+    {
+      "id": "link-r-1",
+      "type": "link",
+      "title": "초간단 달걀볶음밥",
+      "desc": "10분 만에 완성하는 집밥 레시피",
+      "url": "",
+      "enabled": true,
+      "category": "레시피",
+      "num": 1,
+      "time": "10분",
+      "level": "쉬움",
+      "thumbnail": ""
+    },
+    {
+      "id": "link-r-2",
+      "type": "link",
+      "title": "주철 프라이팬",
+      "desc": "평생 쓰는 주방 필수템, 열전도 최강",
+      "url": "",
+      "enabled": true,
+      "category": "주방도구",
+      "num": 2,
+      "thumbnail": ""
+    },
+    {
+      "id": "link-r-3",
+      "type": "link",
+      "title": "국내산 들기름",
+      "desc": "나물 무칠 때 풍미 올려주는 들기름",
+      "url": "",
+      "enabled": true,
+      "category": "재료추천",
+      "num": 3,
+      "thumbnail": ""
+    }
+  ]
+}

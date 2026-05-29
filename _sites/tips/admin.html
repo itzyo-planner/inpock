@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 | 잇지요 꿀팁</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; min-height: 100vh; }
+
+    /* ── 인증 화면 ── */
+    .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .auth-card { background: white; border-radius: 20px; padding: 36px 28px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
+    .auth-logo { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg,#f59e0b,#fcd34d); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: white; margin: 0 auto 20px; }
+    .auth-title { text-align: center; font-size: 1.2rem; font-weight: 700; color: #111827; margin-bottom: 6px; }
+    .auth-sub { text-align: center; font-size: 0.82rem; color: #9ca3af; margin-bottom: 28px; }
+    .auth-label { display: block; font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 6px; margin-top: 16px; }
+    .auth-label:first-of-type { margin-top: 0; }
+    .auth-input { width: 100%; padding: 12px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s; background: #f9fafb; }
+    .auth-input:focus { border-color: #f59e0b; background: white; }
+    .auth-btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; margin-top: 20px; background: linear-gradient(135deg,#f59e0b,#fcd34d); color: white; }
+    .auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .auth-btn-sec { background: #f3f4f6; color: #6b7280; font-size: 0.82rem; margin-top: 10px; }
+    .auth-btn-sec:hover { background: #e5e7eb; transform: none; opacity: 1; }
+    .err-msg { background: #fee2e2; color: #dc2626; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; margin-top: 12px; display: none; }
+    .token-info { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 14px; font-size: 0.8rem; color: #92400e; line-height: 1.6; margin-bottom: 16px; }
+    .token-info ol { padding-left: 16px; margin-top: 6px; }
+    .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 관리자 페이지 ── */
+    #page-admin { display: none; max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; position: relative; padding-bottom: 110px; }
+
+    /* 상단 바 */
+    .top-bar { position: sticky; top: 0; z-index: 20; background: white; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+    .top-title { font-size: 1.1rem; font-weight: 700; color: #111827; }
+    .top-logout { background: none; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; color: #6b7280; cursor: pointer; font-family: inherit; }
+    .top-logout:hover { background: #f9fafb; }
+
+    /* 프로필 카드 */
+    .prof-card { padding: 16px; border-bottom: 1px solid #f0f0f0; }
+    .prof-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .prof-av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#f59e0b,#fcd34d); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1rem; overflow: hidden; flex-shrink: 0; }
+    .prof-av img { width: 100%; height: 100%; object-fit: cover; }
+    .prof-name { font-size: 0.95rem; font-weight: 700; color: #111827; }
+    .prof-url { font-size: 0.78rem; color: #9ca3af; margin-top: 2px; }
+    .stats-row { display: flex; gap: 12px; font-size: 0.78rem; color: #6b7280; flex-wrap: wrap; align-items: center; }
+    .stats-row b { color: #111827; }
+    .stats-sep { color: #d1d5db; }
+    .stat-ga-btn { padding: 2px 8px; border-radius: 6px; border: 1px solid #f59e0b; background: #fffbeb; color: #f59e0b; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+    /* 탭 */
+    .tab-bar { display: flex; border-bottom: 1px solid #f0f0f0; }
+    .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-family: inherit; font-size: 0.88rem; font-weight: 600; color: #9ca3af; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn.active { color: #111827; border-bottom-color: #f59e0b; }
+    .tab-panel { display: none; padding: 16px; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
+    .tab-panel.open { display: block; }
+
+    /* 디자인 탭 입력 */
+    .st-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .st-card { background: white; border-radius: 10px; border: 1px solid #f3f4f6; padding: 12px 10px; text-align: center; }
+    .st-card-title { font-size: 0.7rem; font-weight: 600; color: #9ca3af; margin-bottom: 4px; }
+    .st-card-num { font-size: 1.45rem; font-weight: 700; color: #111827; line-height: 1.2; }
+    .st-card-unit { font-size: 0.7rem; color: #9ca3af; }
+    .st-wide { background: white; border-radius: 10px; border: 1px solid #f3f4f6; padding: 14px 16px; margin-bottom: 10px; }
+    .st-wide-title { font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 8px; }
+    .st-wide-num { font-size: 1.5rem; font-weight: 700; color: #111827; }
+    .st-connect-btn { width: 100%; padding: 13px; border: none; border-radius: 10px; background: linear-gradient(135deg,#4285f4,#34a853); color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .st-refresh-btn { width: 100%; padding: 9px; border: 1.5px solid #e5e7eb; border-radius: 8px; background: white; color: #6b7280; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 10px; }
+    .st-reset-btn { width: 100%; padding: 7px; border: none; background: none; color: #9ca3af; font-size: 0.75rem; cursor: pointer; font-family: inherit; }
+    .dp-label { font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 6px; margin-top: 12px; display: block; }
+    .dp-label:first-child { margin-top: 0; }
+    .dp-input { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.88rem; font-family: inherit; outline: none; background: white; transition: border-color 0.2s; }
+    .dp-input:focus { border-color: #f59e0b; }
+    textarea.dp-input { resize: vertical; min-height: 80px; line-height: 1.6; }
+    .upload-row { display: flex; align-items: center; gap: 10px; }
+    .upload-preview { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#f59e0b,#fcd34d); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; overflow: hidden; flex-shrink: 0; }
+    .upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .upload-file-btn { position: relative; flex: 1; }
+    .upload-file-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+    .upload-file-lbl { display: block; padding: 10px 12px; border: 1.5px dashed #e5e7eb; border-radius: 8px; font-size: 0.82rem; color: #9ca3af; text-align: center; cursor: pointer; transition: border-color 0.2s; }
+    .upload-file-lbl:hover { border-color: #f59e0b; color: #f59e0b; }
+    .dp-save-btn { margin-top: 14px; width: 100%; padding: 11px; border: none; border-radius: 10px; background: #f3f4f6; color: #374151; font-weight: 700; font-size: 0.88rem; font-family: inherit; cursor: pointer; transition: background 0.2s; }
+    .dp-save-btn:hover { background: #e5e7eb; }
+
+    /* 블록 리스트 헤더 */
+    .bl-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; }
+    .bl-title { font-size: 0.95rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px; }
+    .bl-title-q { width: 18px; height: 18px; border-radius: 50%; background: #f3f4f6; color: #9ca3af; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; cursor: default; }
+    .bl-btns { display: flex; gap: 6px; }
+    .bl-btn { padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 7px; background: white; font-size: 0.78rem; color: #374151; font-family: inherit; cursor: pointer; }
+    .bl-btn:hover { background: #f9fafb; }
+
+    /* 블록 아이템 */
+    .block-item { display: flex; align-items: stretch; border-top: 1px solid #f3f4f6; }
+    .block-item:last-child { border-bottom: 1px solid #f3f4f6; }
+
+    .b-left { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 6px; min-width: 32px; }
+    .arr-btn { background: none; border: none; cursor: pointer; color: #d1d5db; padding: 2px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .arr-btn:hover:not(:disabled) { color: #9ca3af; }
+    .arr-btn:disabled { opacity: 0.25; cursor: default; }
+    .drag-dots { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 2px; cursor: grab; }
+    .drag-dots span { width: 3px; height: 3px; border-radius: 50%; background: #d1d5db; display: block; }
+
+    .b-main { flex: 1; padding: 10px 12px 10px 4px; min-width: 0; }
+    .b-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .b-badge { display: flex; align-items: center; gap: 5px; }
+    .b-badge-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .b-badge-icon.link-ic { background: linear-gradient(135deg,#f59e0b,#fcd34d); }
+    .b-badge-icon.text-ic { background: #f59e0b; }
+    .b-badge-icon svg { width: 14px; height: 14px; }
+    .b-badge-label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+    .b-acts { display: flex; align-items: center; gap: 6px; }
+    .b-icon-btn { background: none; border: none; cursor: pointer; color: #c9c9c9; display: flex; align-items: center; padding: 2px; }
+    .b-icon-btn:hover { color: #9ca3af; }
+
+    /* 토글 스위치 */
+    .tog { position: relative; display: inline-block; width: 38px; height: 21px; flex-shrink: 0; }
+    .tog input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .tog-sl { position: absolute; inset: 0; background: #e5e7eb; border-radius: 21px; cursor: pointer; transition: background 0.2s; }
+    .tog-sl:before { content: ''; position: absolute; width: 15px; height: 15px; background: white; border-radius: 50%; left: 3px; top: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .tog input:checked + .tog-sl { background: #f59e0b; }
+    .tog input:checked + .tog-sl:before { transform: translateX(17px); }
+
+    .b-more-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1.1rem; padding: 2px 4px; line-height: 1; font-weight: 700; border-radius: 4px; }
+    .b-more-btn:hover { background: #f3f4f6; }
+
+    .b-row2 { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .b-thumb { width: 50px; height: 50px; border-radius: 8px; background: #f3f4f6; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .b-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .b-thumb-empty { width: 100%; height: 100%; }
+    .b-text-preview { font-size: 0.85rem; color: #6b7280; }
+    .b-text-preview.has-title { color: #111827; font-weight: 500; }
+
+    .b-row3 { display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #f9fafb; padding-top: 6px; }
+    .b-count { font-size: 0.75rem; color: #9ca3af; margin-right: 2px; }
+    .plat-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .plat-kakao { background: #1a1a1a; }
+    .plat-insta { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+
+    /* 비어있을 때 */
+    .bl-empty { text-align: center; padding: 40px 20px; color: #9ca3af; font-size: 0.88rem; }
+
+    /* ⋮ 메뉴 팝업 */
+    #block-menu { position: fixed; background: white; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); overflow: hidden; z-index: 200; display: none; min-width: 130px; }
+    .bm-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; font-size: 0.88rem; color: #374151; transition: background 0.15s; border: none; background: none; width: 100%; font-family: inherit; text-align: left; }
+    .bm-item:hover { background: #f9fafb; }
+    .bm-item.danger { color: #ef4444; }
+    .bm-item.danger:hover { background: #fff5f5; }
+    .bm-sep { height: 1px; background: #f3f4f6; }
+    #menu-backdrop { position: fixed; inset: 0; z-index: 199; display: none; }
+
+    /* 편집 모달 (바텀 시트) */
+    #edit-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; display: none; }
+    #edit-sheet { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; background: white; border-radius: 20px 20px 0 0; z-index: 301; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-height: 90vh; overflow-y: auto; }
+    #edit-sheet.open { transform: translateY(0); }
+    .es-handle { width: 36px; height: 4px; background: #e5e7eb; border-radius: 2px; margin: 12px auto 8px; }
+    .es-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 16px 14px; border-bottom: 1px solid #f3f4f6; }
+    .es-title { font-size: 0.95rem; font-weight: 700; color: #111827; }
+    .es-close { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1.2rem; padding: 4px; line-height: 1; }
+    .es-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .es-label { font-size: 0.78rem; font-weight: 600; color: #6b7280; margin-bottom: 4px; display: block; }
+    .es-input { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.88rem; font-family: inherit; outline: none; transition: border-color 0.2s; background: #fafafa; }
+    .es-input:focus { border-color: #f59e0b; background: white; }
+    textarea.es-input { resize: vertical; min-height: 70px; line-height: 1.6; }
+    .es-thumb-row { display: flex; align-items: center; gap: 8px; }
+    .es-thumb-preview { width: 52px; height: 52px; border-radius: 8px; background: #f3f4f6; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; color: #9ca3af; }
+    .es-thumb-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .es-thumb-inputs { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .es-upload-wrap { position: relative; }
+    .es-upload-wrap input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .es-upload-lbl { display: block; padding: 8px 12px; border: 1.5px dashed #e5e7eb; border-radius: 8px; font-size: 0.78rem; color: #9ca3af; text-align: center; cursor: pointer; }
+    .es-upload-lbl:hover { border-color: #f59e0b; color: #f59e0b; }
+    .es-auto-btn { width: 100%; padding: 8px 12px; border: 1.5px solid #f59e0b; border-radius: 8px; background: #fffbeb; color: #f59e0b; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; text-align: center; }
+    .es-auto-btn:hover { background: #fef3c7; }
+    .es-auto-btn:disabled { opacity: 0.5; cursor: default; }
+    .es-footer { display: flex; gap: 8px; padding: 12px 16px 24px; border-top: 1px solid #f3f4f6; }
+    .es-cancel { flex: 1; padding: 12px; border: 1.5px solid #e5e7eb; border-radius: 10px; background: white; color: #6b7280; font-size: 0.9rem; font-weight: 600; font-family: inherit; cursor: pointer; }
+    .es-save { flex: 2; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg,#f59e0b,#fcd34d); color: white; font-size: 0.9rem; font-weight: 700; font-family: inherit; cursor: pointer; }
+
+    /* FAB */
+    .fab { position: fixed; bottom: 24px; right: 16px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg,#f59e0b,#fcd34d); border: none; color: white; font-size: 1.8rem; line-height: 1; cursor: pointer; box-shadow: 0 4px 16px rgba(245,158,11,0.5); display: none; align-items: center; justify-content: center; z-index: 100; transition: transform 0.2s; }
+    .fab:hover { transform: scale(1.05); }
+    .fab:active { transform: scale(0.95); }
+
+    /* 상단으로 버튼 */
+    .scroll-top-btn { position: fixed; bottom: 28px; left: 16px; width: 40px; height: 40px; border-radius: 50%; background: white; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #9ca3af; opacity: 0; transform: translateY(6px); transition: opacity 0.25s, transform 0.25s, border-color 0.2s, color 0.2s; pointer-events: none; z-index: 100; }
+    .scroll-top-btn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .scroll-top-btn:hover { border-color: #f59e0b; color: #f59e0b; }
+
+    /* 저장 바 */
+    #save-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 16px 20px; background: white; border-top: 1px solid #f0f0f0; z-index: 50; display: none; }
+    #save-bar-inner { max-width: 480px; margin: 0 auto; }
+    .save-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; background: linear-gradient(135deg,#f59e0b,#fcd34d); color: white; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity 0.2s; }
+    .save-btn:disabled { opacity: 0.6; cursor: default; }
+    .save-success { text-align: center; font-size: 0.78rem; color: #16a34a; margin-top: 6px; }
+    .save-error { text-align: center; font-size: 0.78rem; color: #dc2626; margin-top: 6px; }
+
+    @media (min-width: 480px) {
+      .fab { right: calc(50% - 240px + 16px); }
+      .scroll-top-btn { left: calc(50% - 240px + 16px); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ① 비밀번호 -->
+<div id="screen-pw" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">꿀</div>
+    <div class="auth-title">잇지요 꿀팁 관리자</div>
+    <p class="auth-sub">비밀번호를 입력해주세요</p>
+    <label class="auth-label">비밀번호</label>
+    <input class="auth-input" type="password" id="pw-input" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')checkPassword()" />
+    <div class="err-msg" id="pw-err">비밀번호가 올바르지 않습니다.</div>
+    <button class="auth-btn" onclick="checkPassword()">입장하기</button>
+  </div>
+</div>
+
+<!-- ② GitHub 토큰 -->
+<div id="screen-token" class="auth-wrap" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">꿀</div>
+    <div class="auth-title">GitHub 연결</div>
+    <p class="auth-sub">저장 기능을 위해 한 번만 입력하면 됩니다</p>
+    <div class="token-info">
+      <strong>Personal Access Token 발급</strong>
+      <ol>
+        <li>GitHub → Settings → Developer settings</li>
+        <li>Personal access tokens → Tokens (classic)</li>
+        <li>Generate new token → <b>repo</b> 권한 체크 후 생성</li>
+        <li>생성된 토큰을 아래에 붙여넣기</li>
+      </ol>
+    </div>
+    <label class="auth-label">GitHub Token</label>
+    <input class="auth-input" type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+    <div class="err-msg" id="token-err">토큰이 올바르지 않습니다. 다시 확인해주세요.</div>
+    <button class="auth-btn" id="token-btn" onclick="saveToken()">연결하기</button>
+    <button class="auth-btn auth-btn-sec" onclick="resetToken()">뒤로가기</button>
+  </div>
+</div>
+
+<!-- ③ 관리자 페이지 -->
+<div id="page-admin">
+
+  <!-- 상단 바 -->
+  <div class="top-bar">
+    <span class="top-title">꿀팁 관리</span>
+    <button class="top-logout" onclick="logout()">로그아웃</button>
+  </div>
+
+  <!-- 프로필 카드 -->
+  <div class="prof-card">
+    <div class="prof-row">
+      <div class="prof-av" id="prof-av"><span id="prof-av-letter">꿀</span></div>
+      <div>
+        <div class="prof-name" id="prof-name">잇지요 꿀팁</div>
+        <div class="prof-url">itzyo-tips</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <span>1시간 <b id="stat-realtime">—</b></span>
+      <span>오늘 <b id="stat-today">—</b></span>
+      <span>전체 <b id="stat-total">—</b></span>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tab-bar">
+    <button class="tab-btn" id="tab-btn-stats" onclick="toggleTab('stats')">📊 통계</button>
+    <button class="tab-btn" id="tab-btn-design" onclick="toggleTab('design')">🔧 디자인</button>
+  </div>
+
+  <!-- 통계 패널 -->
+  <div class="tab-panel" id="tab-stats">
+    <div id="st-setup">
+      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">
+        Cloudflare Web Analytics 연결로 방문자 통계를 확인하세요.<br>
+        Cloudflare 대시보드에서 사이트를 등록한 뒤 아래에 입력하세요.
+      </p>
+      <div class="dp-label">Account ID</div>
+      <input class="dp-input" id="cf-account-id" type="text" placeholder="32자리 영문숫자" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Cloudflare 대시보드 오른쪽 사이드바 → Account ID</div>
+      <div class="dp-label">Site Tag</div>
+      <input class="dp-input" id="cf-site-tag" type="text" placeholder="Web Analytics 사이트 태그 (32자리)" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Analytics → Web Analytics → 사이트 선택 → 설정 → Site Tag</div>
+      <div class="dp-label">API Token</div>
+      <input class="dp-input" id="cf-api-token" type="password" placeholder="Account Analytics: Read 권한 필요" />
+      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">내 프로필 → API Tokens → Create Token → Account Analytics: Read</div>
+      <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px">설정 저장 및 연결</button>
+
+      <div class="st-grid" id="cf-stat-cards" style="display:none">
+        <div class="st-card">
+          <div class="st-card-title">지난 1시간</div>
+          <div class="st-card-num" id="cf-stat-hour">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
+        <div class="st-card">
+          <div class="st-card-title">오늘</div>
+          <div class="st-card-num" id="cf-stat-today">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
+        <div class="st-card">
+          <div class="st-card-title">전체</div>
+          <div class="st-card-num" id="cf-stat-total">—</div>
+          <div class="st-card-unit">방문</div>
+        </div>
+      </div>
+      <button class="st-refresh-btn" id="cf-refresh-btn" onclick="fetchCFStats()" style="display:none">🔄 통계 새로고침</button>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#f6821f,#fbad41)">
+          📊 Cloudflare Analytics 대시보드 열기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 디자인 패널 -->
+  <div class="tab-panel" id="tab-design">
+    <div class="dp-label">프로필 사진</div>
+    <div class="upload-row">
+      <div class="upload-preview" id="dp-av-preview"><span id="dp-av-letter">꿀</span></div>
+      <div class="upload-file-btn">
+        <label class="upload-file-lbl" id="dp-photo-lbl">📷 사진 선택</label>
+        <input type="file" accept="image/*" onchange="handleProfilePhoto(this)" />
+      </div>
+    </div>
+    <div class="dp-label">닉네임</div>
+    <input class="dp-input" type="text" id="dp-name" placeholder="잇지요 꿀팁" />
+    <div class="dp-label">소개글</div>
+    <textarea class="dp-input" id="dp-bio" placeholder="소개글 (줄바꿈 가능)"></textarea>
+    <div class="dp-label" style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6;">소셜 링크 <span style="font-weight:400;color:#9ca3af">(비워두면 표시 안 됨)</span></div>
+    <div style="font-size:0.72rem;color:#9ca3af;margin-bottom:8px">각 2개까지 입력 가능</div>
+    <div class="dp-label" style="margin-top:0">📸 인스타그램</div>
+    <input class="dp-input" type="url" id="dp-instagram" placeholder="https://www.instagram.com/계정명" />
+    <div class="dp-label">🧵 스레드 1</div>
+    <input class="dp-input" type="url" id="dp-threads" placeholder="https://www.threads.net/@계정명" />
+    <div class="dp-label">🧵 스레드 2</div>
+    <input class="dp-input" type="url" id="dp-threads2" placeholder="https://www.threads.net/@계정명" />
+    <div class="dp-label">▶️ 유튜브 1</div>
+    <input class="dp-input" type="url" id="dp-youtube" placeholder="https://www.youtube.com/@채널명" />
+    <div class="dp-label">▶️ 유튜브 2</div>
+    <input class="dp-input" type="url" id="dp-youtube2" placeholder="https://www.youtube.com/@채널명" />
+    <div class="dp-label" style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6;">📊 구글 애널리틱스 (GA4)</div>
+    <input class="dp-input" type="text" id="dp-ga-id" placeholder="G-XXXXXXXXXX" />
+    <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">analytics.google.com에서 측정 ID를 발급받아 입력하세요</div>
+    <button class="dp-save-btn" onclick="applyDesign()">디자인 적용 (저장 필요)</button>
+  </div>
+
+  <!-- 블록 리스트 -->
+  <div class="bl-header">
+    <div class="bl-title">블록 리스트 <span class="bl-title-q">?</span></div>
+    <div class="bl-btns">
+      <button class="bl-btn">보관함</button>
+      <button class="bl-btn">편집</button>
+    </div>
+  </div>
+
+  <div id="block-list"></div>
+
+</div><!-- /page-admin -->
+
+<!-- FAB -->
+<button class="fab" id="fab-btn" onclick="addLink()">+</button>
+
+<!-- 상단으로 -->
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="상단으로">
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<!-- 저장 바 -->
+<div id="save-bar">
+  <div id="save-bar-inner">
+    <button class="save-btn" id="save-btn" onclick="saveAll()">저장하기 (자동 배포)</button>
+    <div class="save-success" id="save-ok" style="display:none"></div>
+    <div class="save-error" id="save-err" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ⋮ 메뉴 -->
+<div id="menu-backdrop" onclick="closeMenu()"></div>
+<div id="block-menu">
+  <button class="bm-item" onclick="editFromMenu()">
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    편집
+  </button>
+  <div class="bm-sep"></div>
+  <button class="bm-item danger" onclick="deleteFromMenu()">
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    삭제
+  </button>
+</div>
+
+<!-- 편집 모달 -->
+<div id="edit-overlay" onclick="closeEdit()"></div>
+<div id="edit-sheet">
+  <div class="es-handle"></div>
+  <div class="es-header">
+    <span class="es-title" id="es-title">링크 편집</span>
+    <button class="es-close" onclick="closeEdit()">✕</button>
+  </div>
+  <div class="es-body" id="es-body"></div>
+  <div class="es-footer">
+    <button class="es-cancel" onclick="closeEdit()">취소</button>
+    <button class="es-save" onclick="saveEdit()">저장</button>
+  </div>
+</div>
+
+<script>
+  // ════════════════════════════════════════
+  // 설정
+  // ════════════════════════════════════════
+  const ADMIN_PASSWORD = "tips2026";
+  const GITHUB_OWNER   = "itzyo-planner";
+  const GITHUB_REPO    = "itzyo-tips";
+  const GITHUB_BRANCH  = "main";
+  const CONFIG_PATH    = "config.json";
+  const IMAGE_PATH     = "images/profile.jpg";
+  const OG_WORKER_URL  = "";
+
+  // ════════════════════════════════════════
+  // 상태
+  // ════════════════════════════════════════
+  let config       = null;
+  let configSha    = null;
+  let imageSha     = null;
+  let hasUnsaved   = false;
+  let activeMenuId = null;
+  let editingId    = null;
+
+  let pendingProfileBase64 = null;
+  const pendingThumbs = new Map(); // linkId → {base64, ext}
+
+  // ════════════════════════════════════════
+  // 인증
+  // ════════════════════════════════════════
+  function checkPassword() {
+    const val = document.getElementById('pw-input').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('pw-err').style.display = 'none';
+      const token = localStorage.getItem('gh_token');
+      if (token) loadAdmin();
+      else showScreen('token');
+    } else {
+      document.getElementById('pw-err').style.display = 'block';
+    }
+  }
+
+  async function saveToken() {
+    const token = document.getElementById('token-input').value.trim();
+    if (!token) return;
+    const btn = document.getElementById('token-btn');
+    btn.innerHTML = '<span class="spinner"></span>확인 중...';
+    btn.disabled = true;
+    document.getElementById('token-err').style.display = 'none';
+    const ok = await verifyToken(token);
+    btn.innerHTML = '연결하기';
+    btn.disabled = false;
+    if (!ok) { document.getElementById('token-err').style.display = 'block'; return; }
+    localStorage.setItem('gh_token', token);
+    loadAdmin();
+  }
+
+  async function verifyToken(token) {
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`,
+        { headers: { Authorization: `Bearer ${token}` } });
+      return r.ok;
+    } catch { return false; }
+  }
+
+  function logout() {
+    document.getElementById('pw-input').value = '';
+    showScreen('pw');
+  }
+
+  function resetToken() {
+    localStorage.removeItem('gh_token');
+    showScreen('pw');
+  }
+
+  function showScreen(name) {
+    document.getElementById('screen-pw').style.display    = name === 'pw'    ? 'flex' : 'none';
+    document.getElementById('screen-token').style.display = name === 'token' ? 'flex' : 'none';
+    document.getElementById('page-admin').style.display   = name === 'admin' ? 'block' : 'none';
+    document.getElementById('fab-btn').style.display      = name === 'admin' ? 'flex' : 'none';
+  }
+
+  // ════════════════════════════════════════
+  // 로드
+  // ════════════════════════════════════════
+  async function loadAdmin() {
+    showScreen('admin');
+    document.getElementById('block-list').innerHTML =
+      '<div class="bl-empty">불러오는 중...</div>';
+    await fetchConfig();
+    initCFStats();
+  }
+
+  async function fetchConfig() {
+    const token = localStorage.getItem('gh_token');
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_PATH}?ref=${GITHUB_BRANCH}`,
+        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+      );
+      if (res.status === 401) {
+        localStorage.removeItem('gh_token');
+        showScreen('token');
+        document.getElementById('token-err').textContent = '토큰이 만료됐거나 권한이 없습니다. 새 토큰을 입력해주세요.';
+        document.getElementById('token-err').style.display = 'block';
+        return;
+      }
+      if (!res.ok) throw new Error(`GitHub API 오류 (${res.status})`);
+      const data = await res.json();
+      if (!data.content) throw new Error('config.json을 찾을 수 없습니다');
+      configSha = data.sha;
+
+      // TextDecoder로 UTF-8(한글 포함) 안전 디코딩
+      const bytes = Uint8Array.from(
+        atob(data.content.replace(/\n/g, '')),
+        c => c.charCodeAt(0)
+      );
+      config = JSON.parse(new TextDecoder().decode(bytes));
+
+      // id 없는 링크에 id 부여
+      if (!config.links) config.links = [];
+      config.links.forEach((l, i) => {
+        if (!l.id) l.id = 'link-' + Date.now() + '-' + i;
+      });
+
+      renderProfile();
+      renderBlocks();
+      populateDesignTab();
+      fetchImageSha(token);
+    } catch (e) {
+      console.error('config 로드 실패', e);
+      document.getElementById('block-list').innerHTML =
+        `<div class="bl-empty" style="color:#ef4444">
+          ❌ 데이터 로드 실패<br>
+          <small style="color:#9ca3af">${e.message}</small><br><br>
+          <button onclick="fetchConfig()" style="padding:8px 16px;border:1px solid #e5e7eb;border-radius:8px;background:white;cursor:pointer;font-family:inherit;">다시 시도</button>
+        </div>`;
+    }
+  }
+
+  async function fetchImageSha(token) {
+    try {
+      const r = await fetch(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${IMAGE_PATH}?ref=${GITHUB_BRANCH}`,
+        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+      );
+      if (r.ok) imageSha = (await r.json()).sha;
+    } catch {}
+  }
+
+  // ════════════════════════════════════════
+  // 렌더링
+  // ════════════════════════════════════════
+  function renderProfile() {
+    document.getElementById('prof-name').textContent = config.name || '잇지요 꿀팁';
+    if (config.profileImage) {
+      const av = document.getElementById('prof-av');
+      const img = new Image();
+      img.src = config.profileImage + '?t=' + Date.now();
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+      img.onload = () => { av.innerHTML = ''; av.appendChild(img); };
+    }
+  }
+
+  function renderBlocks() {
+    const list = document.getElementById('block-list');
+    if (!config.links.length) {
+      list.innerHTML = '<div class="bl-empty">링크가 없습니다.<br>아래 + 버튼으로 추가하세요.</div>';
+      return;
+    }
+    list.innerHTML = config.links.map((link, idx) => blockHTML(link, idx)).join('');
+  }
+
+  function blockHTML(link, idx) {
+    const isFirst   = idx === 0;
+    const isLast    = idx === config.links.length - 1;
+    const isText    = link.type === 'text';
+    const title     = link.title || '';
+    const enabled   = link.enabled !== false;
+
+    // Expired check: if expires is set and in the past, fade the item
+    let expiredStyle = '';
+    if (link.expires) {
+      const diff = Math.ceil((new Date(link.expires) - new Date()) / 86400000);
+      if (diff < 0) expiredStyle = 'opacity: 0.5;';
+    }
+
+    const thumbHTML = link.thumbnail
+      ? `<div class="b-thumb"><img src="${link.thumbnail}" onerror="this.parentElement.innerHTML='<div class=b-thumb-empty></div>'" /></div>`
+      : `<div class="b-thumb"><div class="b-thumb-empty"></div></div>`;
+
+    const badgeIcon = isText
+      ? `<div class="b-badge-icon text-ic"><svg viewBox="0 0 24 24" fill="white"><text x="5" y="17" font-size="13" font-weight="800" font-family="sans-serif">T</text></svg></div>`
+      : `<div class="b-badge-icon link-ic"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg></div>`;
+
+    return `
+<div class="block-item" data-id="${link.id}" style="${expiredStyle}">
+  <div class="b-left">
+    <button class="arr-btn" onclick="moveBlock('${link.id}',-1)" ${isFirst?'disabled':''} title="위로">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+    </button>
+    <div class="drag-dots">${'<span></span>'.repeat(6)}</div>
+    <button class="arr-btn" onclick="moveBlock('${link.id}',1)" ${isLast?'disabled':''} title="아래로">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </button>
+  </div>
+  <div class="b-main">
+    <div class="b-row1">
+      <div class="b-badge">
+        ${badgeIcon}
+        <span class="b-badge-label">${isText ? '텍스트' : '링크'}</span>
+      </div>
+      <div class="b-acts">
+        ${!isText ? '<button class="b-icon-btn" title="알림"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></button>' : ''}
+        <button class="b-icon-btn" title="고정"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></button>
+        <label class="tog"><input type="checkbox" ${enabled?'checked':''} onchange="toggleBlock('${link.id}',this.checked)"/><span class="tog-sl"></span></label>
+        <button class="b-more-btn" onclick="openMenu(event,'${link.id}')">⋮</button>
+      </div>
+    </div>
+    <div class="b-row2">
+      ${!isText ? thumbHTML : ''}
+      <span class="b-text-preview ${title ? 'has-title' : ''}">${link.num ? `<span style="font-size:0.68rem;font-weight:700;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:1px 5px;margin-right:4px;">#${link.num}</span>` : ''}${title || '타이틀을 입력해주세요'}</span>
+    </div>
+    ${!isText ? `<div class="b-row3">
+      <span class="b-count">총 0</span>
+      <div style="display:flex;gap:4px">
+        <div class="plat-icon plat-kakao"><svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M12 3C6.48 3 2 6.72 2 11.3c0 2.9 1.85 5.44 4.65 6.93L5.6 21l4.08-2.16c.75.1 1.54.16 2.32.16 5.52 0 10-3.72 10-8.3S17.52 3 12 3z"/></svg></div>
+        <div class="plat-icon plat-insta"><svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+      </div>
+    </div>` : ''}
+  </div>
+</div>`;
+  }
+
+  // ════════════════════════════════════════
+  // 블록 조작
+  // ════════════════════════════════════════
+  function nextNum() {
+    const nums = config.links.filter(l => l.num).map(l => Number(l.num));
+    return nums.length ? Math.max(...nums) + 1 : 1;
+  }
+
+  function addLink() {
+    const newLink = { id: 'link-' + Date.now(), type: 'link', title: '', desc: '', url: '', thumbnail: '', enabled: true, num: nextNum() };
+    config.links.push(newLink);
+    renderBlocks();
+    openEdit(newLink.id);
+    markUnsaved();
+  }
+
+  function moveBlock(id, dir) {
+    const idx = config.links.findIndex(l => l.id === id);
+    if (idx < 0) return;
+    const to = idx + dir;
+    if (to < 0 || to >= config.links.length) return;
+    [config.links[idx], config.links[to]] = [config.links[to], config.links[idx]];
+    renderBlocks();
+    markUnsaved();
+  }
+
+  function toggleBlock(id, enabled) {
+    const link = config.links.find(l => l.id === id);
+    if (link) { link.enabled = enabled; markUnsaved(); }
+  }
+
+  function deleteBlock(id) {
+    if (!confirm('이 링크를 삭제하시겠습니까?')) return;
+    config.links = config.links.filter(l => l.id !== id);
+    pendingThumbs.delete(id);
+    renderBlocks();
+    markUnsaved();
+  }
+
+  // ════════════════════════════════════════
+  // ⋮ 메뉴
+  // ════════════════════════════════════════
+  function openMenu(e, id) {
+    e.stopPropagation();
+    activeMenuId = id;
+    const menu = document.getElementById('block-menu');
+    const rect = e.currentTarget.getBoundingClientRect();
+    menu.style.top  = (rect.bottom + 4) + 'px';
+    menu.style.right = (window.innerWidth - rect.right) + 'px';
+    menu.style.left = 'auto';
+    menu.style.display = 'block';
+    document.getElementById('menu-backdrop').style.display = 'block';
+  }
+
+  function closeMenu() {
+    document.getElementById('block-menu').style.display = 'none';
+    document.getElementById('menu-backdrop').style.display = 'none';
+    activeMenuId = null;
+  }
+
+  function editFromMenu()   { const id = activeMenuId; closeMenu(); openEdit(id); }
+  function deleteFromMenu() { const id = activeMenuId; closeMenu(); deleteBlock(id); }
+
+  // ════════════════════════════════════════
+  // 편집 모달
+  // ════════════════════════════════════════
+  function openEdit(id) {
+    editingId = id;
+    const link = config.links.find(l => l.id === id);
+    if (!link) return;
+    const isText = link.type === 'text';
+
+    document.getElementById('es-title').textContent = isText ? '텍스트 편집' : '링크 편집';
+
+    const body = document.getElementById('es-body');
+    if (isText) {
+      body.innerHTML = `
+        <div><label class="es-label">텍스트 내용</label>
+        <textarea class="es-input" id="es-text" placeholder="텍스트를 입력하세요">${link.title||''}</textarea></div>`;
+    } else {
+      const thumbSrc = link.thumbnail || '';
+      body.innerHTML = `
+        <div><label class="es-label">제목</label>
+        <input class="es-input" type="text" id="es-title-input" placeholder="타이틀" value="${escHtml(link.title||'')}" /></div>
+        <div><label class="es-label">URL</label>
+        <input class="es-input" type="url" id="es-url" placeholder="https://..." value="${escHtml(link.url||'')}" /></div>
+        <div><label class="es-label">설명 (선택)</label>
+        <input class="es-input" type="text" id="es-desc" placeholder="설명" value="${escHtml(link.desc||'')}" /></div>
+        <div><label class="es-label">카테고리 (선택)</label>
+        <input class="es-input" type="text" id="es-category" placeholder="예: 생활꿀팁, 절약·혜택, 앱추천..." value="${escHtml(link.category||'')}" /></div>
+        <div><label class="es-label">만료일 (선택) — 지난 날짜는 흐리게 표시</label>
+        <input class="es-input" type="date" id="es-expires" /></div>
+        <div><label class="es-label">썸네일</label>
+        <div class="es-thumb-row">
+          <div class="es-thumb-preview" id="es-thumb-preview">
+            <img id="es-thumb-img" src="${thumbSrc}" ${thumbSrc?'':'style="display:none"'} onerror="this.style.display='none'" />
+            ${!thumbSrc ? '🖼' : ''}
+          </div>
+          <div class="es-thumb-inputs">
+            <input class="es-input" type="url" id="es-thumb-url" placeholder="이미지 URL" value="${escHtml(thumbSrc)}" oninput="previewThumb(this.value)" style="margin:0" />
+            <button class="es-auto-btn" onclick="fetchOgImage(event)">🔗 URL에서 자동 가져오기</button>
+            <div class="es-upload-wrap">
+              <label class="es-upload-lbl" id="es-upload-lbl">📷 파일 업로드</label>
+              <input type="file" accept="image/*" onchange="handleThumbFile(this)" />
+            </div>
+          </div>
+        </div></div>`;
+
+      // Populate expires after innerHTML is set
+      document.getElementById('es-expires').value = link.expires || '';
+    }
+
+    document.getElementById('edit-overlay').style.display = 'block';
+    requestAnimationFrame(() => document.getElementById('edit-sheet').classList.add('open'));
+  }
+
+  function closeEdit() {
+    document.getElementById('edit-sheet').classList.remove('open');
+    document.getElementById('edit-overlay').style.display = 'none';
+    editingId = null;
+  }
+
+  function saveEdit() {
+    const link = config.links.find(l => l.id === editingId);
+    if (!link) { closeEdit(); return; }
+
+    if (link.type === 'text') {
+      link.title = document.getElementById('es-text')?.value || '';
+    } else {
+      link.title     = document.getElementById('es-title-input')?.value.trim() || '';
+      link.url       = document.getElementById('es-url')?.value.trim() || '';
+      link.desc      = document.getElementById('es-desc')?.value.trim() || '';
+      link.category  = document.getElementById('es-category')?.value.trim() || '';
+      link.expires   = document.getElementById('es-expires')?.value || '';
+      link.thumbnail = document.getElementById('es-thumb-url')?.value.trim() || '';
+    }
+
+    closeEdit();
+    renderBlocks();
+    markUnsaved();
+  }
+
+  async function fetchOgImage(event) {
+    const urlInput = document.getElementById('es-url');
+    const linkUrl = urlInput?.value.trim();
+    if (!linkUrl) { alert('먼저 링크 URL을 입력해주세요.'); return; }
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '불러오는 중...';
+    btn.disabled = true;
+    try {
+      let image = null;
+      if (OG_WORKER_URL) {
+        const res = await fetch(`${OG_WORKER_URL}?url=${encodeURIComponent(linkUrl)}`);
+        const data = await res.json();
+        image = data.image || null;
+      } else {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(linkUrl)}`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        const html = data.contents || '';
+        const m = html.match(/property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
+                || html.match(/content=["']([^"']+)["'][^>]*property=["']og:image["']/i)
+                || html.match(/name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+        image = m ? m[1] : null;
+      }
+      if (image) {
+        document.getElementById('es-thumb-url').value = image;
+        previewThumb(image);
+      } else {
+        alert('썸네일 이미지를 찾을 수 없습니다.\n직접 URL을 입력하거나 파일을 업로드해주세요.');
+      }
+    } catch (e) {
+      alert('가져오기 실패: ' + e.message);
+    } finally {
+      btn.textContent = orig;
+      btn.disabled = false;
+    }
+  }
+
+  function previewThumb(url) {
+    const img = document.getElementById('es-thumb-img');
+    if (url) {
+      img.src = url;
+      img.style.display = 'block';
+      img.onerror = () => { img.style.display = 'none'; };
+    } else {
+      img.style.display = 'none';
+    }
+  }
+
+  function handleThumbFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('5MB 이하 이미지만 가능합니다.'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      pendingThumbs.set(editingId, { base64, ext });
+      document.getElementById('es-thumb-url').value = '';
+      const img = document.getElementById('es-thumb-img');
+      img.src = dataUrl;
+      img.style.display = 'block';
+      document.getElementById('es-upload-lbl').textContent = '✅ ' + file.name;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ════════════════════════════════════════
+  // 디자인 탭
+  // ════════════════════════════════════════
+  function populateDesignTab() {
+    document.getElementById('dp-name').value      = config.name      || '';
+    document.getElementById('dp-bio').value       = config.bio       || '';
+    document.getElementById('dp-instagram').value = config.instagram || '';
+    document.getElementById('dp-threads').value   = config.threads   || '';
+    document.getElementById('dp-threads2').value  = config.threads2  || '';
+    document.getElementById('dp-youtube').value   = config.youtube   || '';
+    document.getElementById('dp-youtube2').value  = config.youtube2  || '';
+    document.getElementById('dp-ga-id').value     = config.ga_id     || '';
+    if (config.profileImage) {
+      const prev = document.getElementById('dp-av-preview');
+      if (prev) {
+        prev.innerHTML = `<img src="${config.profileImage}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'" />`;
+      }
+    }
+  }
+
+  function handleProfilePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('5MB 이하 이미지만 가능합니다.'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingProfileBase64 = e.target.result.split(',')[1];
+      document.getElementById('dp-photo-lbl').textContent = '✅ ' + file.name;
+      const prev = document.getElementById('dp-av-preview');
+      prev.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function applyDesign() {
+    config.name      = document.getElementById('dp-name').value.trim();
+    config.bio       = document.getElementById('dp-bio').value;
+    config.instagram = document.getElementById('dp-instagram').value.trim();
+    config.threads   = document.getElementById('dp-threads').value.trim();
+    config.threads2  = document.getElementById('dp-threads2').value.trim();
+    config.youtube   = document.getElementById('dp-youtube').value.trim();
+    config.youtube2  = document.getElementById('dp-youtube2').value.trim();
+    config.ga_id     = document.getElementById('dp-ga-id').value.trim();
+    document.getElementById('prof-name').textContent = config.name || '잇지요 꿀팁';
+    markUnsaved();
+    alert('디자인이 적용됐습니다. 저장 버튼을 눌러 배포하세요.');
+  }
+
+  // ════════════════════════════════════════
+  // 탭
+  // ════════════════════════════════════════
+  function toggleTab(name) {
+    const panel = document.getElementById('tab-' + name);
+    const btn   = document.getElementById('tab-btn-' + name);
+    const isOpen = panel.classList.contains('open');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('open'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (!isOpen) { panel.classList.add('open'); btn.classList.add('active'); if (name === 'stats') initStatsTab(); }
+  }
+
+  // ════════════════════════════════════════
+  // 통계 (Cloudflare Analytics)
+  // ════════════════════════════════════════
+  function initStatsTab() {
+    document.getElementById('cf-account-id').value = localStorage.getItem('cf_account_id') || '';
+    document.getElementById('cf-site-tag').value   = localStorage.getItem('cf_site_tag')   || '';
+    document.getElementById('cf-api-token').value  = localStorage.getItem('cf_api_token')  || '';
+    if (localStorage.getItem('cf_api_token') && localStorage.getItem('cf_site_tag')) {
+      document.getElementById('cf-stat-cards').style.display = 'grid';
+      document.getElementById('cf-refresh-btn').style.display = 'block';
+      fetchCFStats();
+    }
+  }
+
+  function saveCFSettings() {
+    const accountId = document.getElementById('cf-account-id').value.trim();
+    const siteTag   = document.getElementById('cf-site-tag').value.trim();
+    const apiToken  = document.getElementById('cf-api-token').value.trim();
+    if (accountId) localStorage.setItem('cf_account_id', accountId);
+    if (siteTag)   localStorage.setItem('cf_site_tag',   siteTag);
+    if (apiToken)  localStorage.setItem('cf_api_token',  apiToken);
+    if (apiToken && siteTag) {
+      document.getElementById('cf-stat-cards').style.display = 'grid';
+      document.getElementById('cf-refresh-btn').style.display = 'block';
+      fetchCFStats();
+    }
+    alert('저장됐습니다.');
+  }
+
+  async function fetchCFStats() {
+    const accountId = localStorage.getItem('cf_account_id');
+    const siteTag   = localStorage.getItem('cf_site_tag');
+    const apiToken  = localStorage.getItem('cf_api_token');
+    if (!accountId || !siteTag || !apiToken) return;
+
+    const now        = new Date();
+    const hourAgo    = new Date(now - 3600000).toISOString();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const allStart   = '2024-01-01T00:00:00Z';
+
+    const query = `{
+      viewer {
+        accounts(filter: {accountTag: "${accountId}"}) {
+          hourVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${hourAgo}"}]}
+            limit: 1
+          ) { sum { visits } }
+          todayVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${todayStart}"}]}
+            limit: 1
+          ) { sum { visits } }
+          totalVisits: rumPageloadEventsAdaptiveGroups(
+            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${allStart}"}]}
+            limit: 1
+          ) { sum { visits } }
+        }
+      }
+    }`;
+
+    try {
+      const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+      const data = await res.json();
+      if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL 오류');
+      const acct = data?.data?.viewer?.accounts?.[0];
+      if (!acct) throw new Error('계정 데이터 없음');
+
+      const hourV  = acct.hourVisits?.[0]?.sum?.visits  ?? 0;
+      const todayV = acct.todayVisits?.[0]?.sum?.visits ?? 0;
+      const totalV = acct.totalVisits?.[0]?.sum?.visits ?? 0;
+
+      const fmt = n => n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
+      document.getElementById('cf-stat-hour').textContent  = fmt(hourV);
+      document.getElementById('cf-stat-today').textContent = fmt(todayV);
+      document.getElementById('cf-stat-total').textContent = fmt(totalV);
+      document.getElementById('stat-realtime').textContent = fmt(hourV);
+      document.getElementById('stat-today').textContent    = fmt(todayV);
+      document.getElementById('stat-total').textContent    = fmt(totalV);
+    } catch(e) {
+      console.error('CF stats 오류:', e.message);
+    }
+  }
+
+  function initCFStats() {
+    const apiToken = localStorage.getItem('cf_api_token');
+    const siteTag  = localStorage.getItem('cf_site_tag');
+    if (!apiToken || !siteTag) return;
+    fetchCFStats();
+  }
+
+  // ════════════════════════════════════════
+  // 저장
+  // ════════════════════════════════════════
+  function markUnsaved() {
+    hasUnsaved = true;
+    document.getElementById('save-bar').style.display = 'block';
+    document.getElementById('save-ok').style.display  = 'none';
+    document.getElementById('save-err').style.display = 'none';
+  }
+
+  async function saveAll() {
+    const btn   = document.getElementById('save-btn');
+    const okEl  = document.getElementById('save-ok');
+    const errEl = document.getElementById('save-err');
+    okEl.style.display = errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>저장 중...';
+
+    const token = localStorage.getItem('gh_token');
+    try {
+      // 1. 프로필 사진 업로드
+      if (pendingProfileBase64) {
+        const body = { message: 'chore: 프로필 사진 업데이트', content: pendingProfileBase64, branch: GITHUB_BRANCH };
+        if (imageSha) body.sha = imageSha;
+        const r = await ghPut(`contents/${IMAGE_PATH}`, body, token);
+        if (!r.ok) throw new Error('프로필 사진 업로드 실패');
+        imageSha = (await r.json()).content.sha;
+        pendingProfileBase64 = null;
+      }
+
+      // 2. 썸네일 업로드
+      for (const [linkId, { base64, ext }] of pendingThumbs.entries()) {
+        const path = `images/thumb-${linkId}.${ext}`;
+        let sha;
+        try {
+          const chk = await fetch(
+            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+          );
+          if (chk.ok) sha = (await chk.json()).sha;
+        } catch {}
+        const body = { message: 'chore: 링크 썸네일 업로드', content: base64, branch: GITHUB_BRANCH };
+        if (sha) body.sha = sha;
+        const r = await ghPut(`contents/${path}`, body, token);
+        if (!r.ok) throw new Error('썸네일 업로드 실패');
+        const link = config.links.find(l => l.id === linkId);
+        if (link) link.thumbnail = path;
+        pendingThumbs.delete(linkId);
+      }
+
+      // 3. config.json 저장
+      const json = JSON.stringify(config, null, 2);
+      const b64  = btoa(unescape(encodeURIComponent(json)));
+      const cfgBody = { message: 'chore: 관리자 페이지에서 콘텐츠 업데이트', content: b64, branch: GITHUB_BRANCH };
+      if (configSha) cfgBody.sha = configSha;
+      const r = await ghPut(`contents/${CONFIG_PATH}`, cfgBody, token);
+      if (!r.ok) throw new Error('설정 저장 실패');
+      configSha = (await r.json()).content.sha;
+
+      hasUnsaved = false;
+      renderBlocks();
+      okEl.textContent = '✅ 저장 완료! 약 1분 후 반영됩니다.';
+      okEl.style.display = 'block';
+    } catch (e) {
+      errEl.textContent = '❌ 저장 실패: ' + e.message;
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '저장하기 (자동 배포)';
+    }
+  }
+
+  function ghPut(path, body, token) {
+    return fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+      body: JSON.stringify(body),
+    });
+  }
+
+  // ════════════════════════════════════════
+  // 유틸
+  // ════════════════════════════════════════
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scroll-top-btn');
+    if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+  }, { passive: true });
+</script>
+</body>
+</html>

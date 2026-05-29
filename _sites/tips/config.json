@@ -1,0 +1,43 @@
+{
+  "name": "잇지요 꿀팁",
+  "handle": "@itzyo_tips",
+  "bio": "생활 꿀팁과 알뜰 정보 모음 🍯\n유용한 정보를 함께 나눠요.",
+  "profileImage": "images/profile.jpg",
+  "instagram": "",
+  "ga_id": "",
+  "links": [
+    {
+      "id": "link-t-1",
+      "type": "link",
+      "title": "전기요금 30% 절약하는 법",
+      "desc": "집에서 바로 실천 가능한 꿀팁 5가지",
+      "url": "",
+      "enabled": true,
+      "category": "생활꿀팁",
+      "num": 1,
+      "thumbnail": ""
+    },
+    {
+      "id": "link-t-2",
+      "type": "link",
+      "title": "쿠팡 로켓배송 무료배송 꿀팁",
+      "desc": "19,800원 이하 상품도 무료배송 받는 방법",
+      "url": "",
+      "enabled": true,
+      "category": "절약·혜택",
+      "num": 2,
+      "thumbnail": ""
+    },
+    {
+      "id": "link-t-3",
+      "type": "link",
+      "title": "가계부 앱 추천 TOP3",
+      "desc": "자동 가계부로 지출 관리를 쉽게",
+      "url": "",
+      "enabled": true,
+      "category": "앱추천",
+      "num": 3,
+      "thumbnail": ""
+    }
+  ]
+}
