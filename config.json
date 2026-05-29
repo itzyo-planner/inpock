@@ -99,6 +99,17 @@
       "enabled": true,
       "num": 9,
       "category": "뷰티"
+    },
+    {
+      "id": "link-1780037190617",
+      "type": "link",
+      "title": "퓌 블러셔 푸딩팟",
+      "desc": "인스타에서 이거 없으면 메이크업 못 한다고 소문난 말랑 촉촉 푸딩 질감 치크",
+      "url": "https://link.coupang.com/a/d8TkYHuos8",
+      "thumbnail": "https://thumbnail12.coupangcdn.com/thumbnails/remote/212x212ex/image/retail/images/2025/03/21/17/5/af07f148-6f62-4b08-b975-11c358ad880b.jpg",
+      "enabled": true,
+      "num": 10,
+      "category": "뷰티"
     }
   ],
   "threads": "",
