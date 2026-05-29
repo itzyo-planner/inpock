@@ -59,12 +59,35 @@
     {
       "id": "link-1779980692863",
       "type": "link",
-      "title": "",
+      "title": "니베아 크림",
       "desc": "",
-      "url": "",
-      "thumbnail": "",
+      "url": "https://link.coupang.com/a/dYvtDEo9Po",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/0d62/160ea7111564fb4f06254824995d82de5089ca7aba5e92d9389c78d6c77a.jpg",
       "enabled": true,
-      "num": 5
+      "num": 5,
+      "category": "바디관리"
+    },
+    {
+      "id": "link-1780027964155",
+      "type": "link",
+      "title": "패브릭 리무버",
+      "desc": "아끼는 옷에 묻은 노란 녹물 소리 소문 없이 지워주는 구원템",
+      "url": "https://link.coupang.com/a/d8H7Zjyx1E",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/316f/24ffa102021885ab18b5bd154df15d252e08c8f9501b36bbe86c985b1f3d.jpg",
+      "enabled": true,
+      "num": 6,
+      "category": "생활용품"
+    },
+    {
+      "id": "link-1780028451060",
+      "type": "link",
+      "title": "디오디너리 글리코릭 애씨드",
+      "desc": "겨드랑이 묵은 각질이랑 꼬구정물 싹 닦아내 주는 착색 토닝",
+      "url": "https://link.coupang.com/a/d5Ym8SmuGq",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/219291227847996-6686944e-eff8-4bbf-b253-8b4bd3f0291d.jpg",
+      "enabled": true,
+      "num": 7,
+      "category": "바디관리"
     }
   ]
 }
