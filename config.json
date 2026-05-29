@@ -88,6 +88,17 @@
       "enabled": true,
       "num": 7,
       "category": "바디관리"
+    },
+    {
+      "id": "link-1780029173036",
+      "type": "link",
+      "title": "카이 빗 가위 내장형 눈썹 가위",
+      "desc": "빗이랑 가위가 합쳐져서 대충 잘라도 길이 일정하게 정돈",
+      "url": "https://link.coupang.com/a/d8JXUzEUFM",
+      "thumbnail": "https://t1c.coupangcdn.com/thumbnails/remote/212x212ex/image/vendor_inventory/ba87/892d708b8f0fe107f029ef7e26b481072fe16656732d9eba5c36f9927e84.png",
+      "enabled": true,
+      "num": 9,
+      "category": "뷰티"
     }
   ]
 }
