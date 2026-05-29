@@ -1,7 +1,7 @@
 {
   "name": "잇지요",
   "handle": "@itzyo",
-  "bio": "좋은 상품을 함께 나눠요 ✨\n쿠팡파트너스 활동을 통해\n일정액의 수수료를 제공받습니다.",
+  "bio": "“본 페이지에는 제휴 마케팅 링크가 포함되어 있으며, 상품 구매 시 일정 수수료를 제공받습니다.”",
   "profileImage": "images/profile.jpg",
   "instagram": "https://www.instagram.com/itzyo_in",
   "ga_id": "G-P5G7Y2WVKC",
@@ -100,5 +100,9 @@
       "num": 9,
       "category": "뷰티"
     }
-  ]
+  ],
+  "threads": "",
+  "threads2": "",
+  "youtube": "",
+  "youtube2": ""
 }
