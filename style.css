@@ -202,18 +202,18 @@ body {
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  border-radius: 18px;
-  border: none;
-  background: white;
+  border-radius: 16px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
-  box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(251,146,60,0.12);
 }
 
 .link-card:hover {
-  background: white;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+  background: #ffedd5;
+  box-shadow: 0 6px 20px rgba(251,146,60,0.2);
   transform: translateY(-2px);
 }
 
