@@ -11,6 +11,42 @@ body {
   color: #1f2937;
 }
 
+/* 공지 티커 */
+.ticker-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  overflow: hidden;
+  padding: 8px 0;
+  background: linear-gradient(90deg, #f43f6e, #e879f9, #f472b6, #f43f6e);
+  background-size: 300% 100%;
+  animation: ticker-gradient 5s linear infinite;
+}
+
+@keyframes ticker-gradient {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+.ticker {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker-scroll 22s linear infinite;
+}
+
+.ticker span {
+  color: white;
+  font-size: 0.77rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -164,20 +200,20 @@ body {
 .link-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border-radius: 16px;
-  border: 1px solid #fee2e2;
-  background: #fff5f5;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: none;
+  background: white;
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.08);
 }
 
 .link-card:hover {
-  background: #fee2e2;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  background: white;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.13);
   transform: translateY(-2px);
 }
 
@@ -304,9 +340,9 @@ body {
 /* 링크 썸네일 */
 .link-thumb {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
   overflow: hidden;
   background: #f3f4f6;
 }
