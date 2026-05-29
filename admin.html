@@ -1079,14 +1079,18 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function _updateScrollBtn() {
+  // 상단으로 버튼 — IntersectionObserver 방식 (가장 안정적)
+  (function() {
+    const sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute;top:120px;height:1px;width:1px;pointer-events:none;';
+    document.body.prepend(sentinel);
     const btn = document.getElementById('scroll-top-btn');
-    if (!btn) return;
-    const scrolled = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
-    btn.classList.toggle('visible', scrolled > 100);
-  }
-  window.addEventListener('scroll', _updateScrollBtn, { passive: true });
-  document.addEventListener('scroll', _updateScrollBtn, { passive: true });
+    if (btn) {
+      new IntersectionObserver(([e]) => {
+        btn.classList.toggle('visible', !e.isIntersecting);
+      }, { threshold: 0 }).observe(sentinel);
+    }
+  })();
 </script>
 </body>
 </html>
