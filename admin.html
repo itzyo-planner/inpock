@@ -1079,10 +1079,14 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  window.addEventListener('scroll', () => {
+  function _updateScrollBtn() {
     const btn = document.getElementById('scroll-top-btn');
-    if (btn) btn.classList.toggle('visible', window.scrollY > 200);
-  }, { passive: true });
+    if (!btn) return;
+    const scrolled = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+    btn.classList.toggle('visible', scrolled > 100);
+  }
+  window.addEventListener('scroll', _updateScrollBtn, { passive: true });
+  document.addEventListener('scroll', _updateScrollBtn, { passive: true });
 </script>
 </body>
 </html>
