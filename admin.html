@@ -185,6 +185,11 @@
     .fab:hover { transform: scale(1.05); }
     .fab:active { transform: scale(0.95); }
 
+    /* 상단으로 버튼 */
+    .scroll-top-btn { position: fixed; bottom: 28px; left: 16px; width: 40px; height: 40px; border-radius: 50%; background: white; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #9ca3af; opacity: 0; transform: translateY(6px); transition: opacity 0.25s, transform 0.25s, border-color 0.2s, color 0.2s; pointer-events: none; z-index: 100; }
+    .scroll-top-btn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .scroll-top-btn:hover { border-color: #fb923c; color: #fb923c; }
+
     /* 저장 바 */
     #save-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 16px 20px; background: white; border-top: 1px solid #f0f0f0; z-index: 50; display: none; }
     #save-bar-inner { max-width: 480px; margin: 0 auto; }
@@ -195,6 +200,7 @@
 
     @media (min-width: 480px) {
       .fab { right: calc(50% - 240px + 16px); }
+      .scroll-top-btn { left: calc(50% - 240px + 16px); }
     }
   </style>
 </head>
@@ -359,6 +365,11 @@
 
 <!-- FAB -->
 <button class="fab" id="fab-btn" onclick="addLink()">+</button>
+
+<!-- 상단으로 -->
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="상단으로">
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
 
 <!-- 저장 바 -->
 <div id="save-bar">
@@ -1067,6 +1078,11 @@
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scroll-top-btn');
+    if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+  }, { passive: true });
 </script>
 </body>
 </html>
