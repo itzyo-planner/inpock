@@ -369,6 +369,32 @@ body {
   font-size: 0.9rem;
 }
 
+/* 사이트 공유 버튼 */
+.site-share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1.5px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.site-share-btn:hover {
+  border-color: #fb923c;
+  color: #fb923c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251,146,60,0.15);
+}
+
 /* 푸터 */
 footer {
   margin-top: 48px;
