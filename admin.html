@@ -496,6 +496,8 @@
     showScreen('admin');
     document.getElementById('block-list').innerHTML =
       '<div class="bl-empty">불러오는 중...</div>';
+    if (!localStorage.getItem('cf_account_id')) localStorage.setItem('cf_account_id', '3c8bdef997688ad3969ed7b867bcb402');
+    if (!localStorage.getItem('cf_site_tag'))   localStorage.setItem('cf_site_tag',   '885de37df13d47e8b1fca8d339f08467');
     await fetchConfig();
     initCFStats();
   }
