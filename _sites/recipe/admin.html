@@ -421,6 +421,8 @@
   const CONFIG_PATH    = "config.json";
   const IMAGE_PATH     = "images/profile.jpg";
   const OG_WORKER_URL  = "";
+  const TRACKER_URL    = 'https://inpock-tracker.kawoohyun.workers.dev';
+  const SITE_ID        = 'recipe';
 
   // ════════════════════════════════════════
   // 상태
@@ -577,6 +579,21 @@
       return;
     }
     list.innerHTML = config.links.map((link, idx) => blockHTML(link, idx)).join('');
+    fetchClickCounts();
+  }
+
+  async function fetchClickCounts() {
+    try {
+      const res = await fetch(`${TRACKER_URL}/counts?site=${SITE_ID}`);
+      const counts = await res.json();
+      document.querySelectorAll('.block-item').forEach(item => {
+        const link = config.links.find(l => l.id === item.dataset.id);
+        if (link && link.num) {
+          const el = item.querySelector('.b-count');
+          if (el) el.textContent = '총 ' + (counts[String(link.num)] || 0);
+        }
+      });
+    } catch(e) {}
   }
 
   function blockHTML(link, idx) {

@@ -413,7 +413,9 @@
   // ════════════════════════════════════════
   // 설정
   // ════════════════════════════════════════
-  const ADMIN_PASSWORD = "954369";   // ← 비밀번호 변경
+  const ADMIN_PASSWORD = "954369";
+  const TRACKER_URL = 'https://inpock-tracker.kawoohyun.workers.dev';
+  const SITE_ID = 'inpock';
   const GITHUB_OWNER   = "itzyo-planner";
   const GITHUB_REPO    = "inpock";
   const GITHUB_BRANCH  = "claude/push-changes-QmMYl";
@@ -580,6 +582,21 @@
       return;
     }
     list.innerHTML = config.links.map((link, idx) => blockHTML(link, idx)).join('');
+    fetchClickCounts();
+  }
+
+  async function fetchClickCounts() {
+    try {
+      const res = await fetch(`${TRACKER_URL}/counts?site=${SITE_ID}`);
+      const counts = await res.json();
+      document.querySelectorAll('.block-item').forEach(item => {
+        const link = config.links.find(l => l.id === item.dataset.id);
+        if (link && link.num) {
+          const el = item.querySelector('.b-count');
+          if (el) el.textContent = '총 ' + (counts[String(link.num)] || 0);
+        }
+      });
+    } catch(e) {}
   }
 
   function blockHTML(link, idx) {

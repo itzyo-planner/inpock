@@ -108,10 +108,15 @@
       gtag('config', id);
     }
 
+    const TRACKER_URL = 'https://inpock-tracker.kawoohyun.workers.dev';
+    const SITE_ID = 'recipe';
+
     function trackClick(num, title) {
-      if (window.gtag) {
-        gtag('event', 'link_click', { product_num: num, product_title: title });
-      }
+      if (window.gtag) gtag('event', 'link_click', { product_num: num, product_title: title });
+      if (num) fetch(TRACKER_URL + '/click', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({site: SITE_ID, num: String(num)})
+      }).catch(()=>{});
     }
 
     function copySiteLink() {
