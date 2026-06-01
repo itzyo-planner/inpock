@@ -183,18 +183,20 @@ body {
 }
 
 .link-num {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #fb923c;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #c2460f;
   background: #fff7ed;
-  border: 1px solid #fed7aa;
-  border-radius: 4px;
-  padding: 1px 5px;
-  margin-right: 4px;
+  border: 1.5px solid #fb923c;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-right: 6px;
   vertical-align: middle;
   flex-shrink: 0;
   white-space: nowrap;
+  line-height: 1.4;
 }
 
 .link-card {
