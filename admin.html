@@ -60,7 +60,7 @@
     .tab-panel.open { display: block; }
 
     /* 디자인 탭 입력 */
-    .st-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .st-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; cursor: pointer; }
     .st-card { background: white; border-radius: 10px; border: 1px solid #f3f4f6; padding: 12px 10px; text-align: center; }
     .st-card-title { font-size: 0.7rem; font-weight: 600; color: #9ca3af; margin-bottom: 4px; }
     .st-card-num { font-size: 1.45rem; font-weight: 700; color: #111827; line-height: 1.2; }
@@ -296,7 +296,7 @@
       <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">내 프로필 → API Tokens → Create Token → Account Analytics: Read</div>
       <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px">설정 저장 및 연결</button>
 
-      <div class="st-grid" id="cf-stat-cards" style="display:none">
+      <div class="st-grid" id="cf-stat-cards" style="display:none" onclick="fetchCFStats()" title="탭하면 새로고침">
         <div class="st-card">
           <div class="st-card-title">지난 1시간</div>
           <div class="st-card-num" id="cf-stat-hour">—</div>
@@ -308,12 +308,11 @@
           <div class="st-card-unit">방문</div>
         </div>
         <div class="st-card">
-          <div class="st-card-title">전체</div>
+          <div class="st-card-title">전체 (90일)</div>
           <div class="st-card-num" id="cf-stat-total">—</div>
           <div class="st-card-unit">방문</div>
         </div>
       </div>
-      <button class="st-refresh-btn" id="cf-refresh-btn" onclick="fetchCFStats()" style="display:none">🔄 통계 새로고침</button>
 
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
         <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#f6821f,#fbad41)">
@@ -983,7 +982,6 @@
     document.getElementById('cf-api-token').value  = localStorage.getItem('cf_api_token')  || '';
     if (localStorage.getItem('cf_api_token') && localStorage.getItem('cf_site_tag')) {
       document.getElementById('cf-stat-cards').style.display = 'grid';
-      document.getElementById('cf-refresh-btn').style.display = 'block';
       fetchCFStats();
     }
   }
@@ -997,7 +995,6 @@
     if (apiToken)  localStorage.setItem('cf_api_token',  apiToken);
     if (apiToken && siteTag) {
       document.getElementById('cf-stat-cards').style.display = 'grid';
-      document.getElementById('cf-refresh-btn').style.display = 'block';
       fetchCFStats();
     }
     alert('저장됐습니다.');
