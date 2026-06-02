@@ -294,10 +294,7 @@
       <div class="dp-label">API Token</div>
       <input class="dp-input" id="cf-api-token" type="password" placeholder="Account Analytics: Read 권한 필요" />
       <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">내 프로필 → API Tokens → Create Token → Account Analytics: Read</div>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="dp-save-btn" onclick="saveCFSettings()" style="flex:1">설정 저장 및 연결</button>
-        <button class="st-refresh-btn" id="cf-refresh-btn" onclick="fetchCFStats()" style="display:none;flex:0 0 auto;padding:9px 14px;margin-top:0">🔄</button>
-      </div>
+      <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px">설정 저장 및 연결</button>
 
       <div class="st-grid" id="cf-stat-cards" style="display:none">
         <div class="st-card">
@@ -316,6 +313,8 @@
           <div class="st-card-unit">방문</div>
         </div>
       </div>
+      <button class="st-refresh-btn" id="cf-refresh-btn" onclick="fetchCFStats()" style="display:none">🔄 통계 새로고침</button>
+
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
         <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#f6821f,#fbad41)">
           📊 Cloudflare Analytics 대시보드 열기
