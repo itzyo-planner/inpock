@@ -267,9 +267,11 @@
       </div>
     </div>
     <div class="stats-row">
-      <span>1시간 <b id="stat-realtime">—</b></span>
-      <span>오늘 <b id="stat-today">—</b></span>
-      <span>전체 <b id="stat-total">—</b></span>
+      <span>오늘 방문 <b id="stat-today">—</b></span>
+      <span class="stats-sep">·</span>
+      <span>이번달 <b id="stat-month">—</b></span>
+      <span class="stats-sep">·</span>
+      <span>누적 <b id="stat-total">—</b></span>
     </div>
   </div>
 
@@ -282,40 +284,35 @@
   <!-- 통계 패널 -->
   <div class="tab-panel" id="tab-stats">
     <div id="st-setup">
-      <p style="font-size:0.82rem;color:#6b7280;line-height:1.7;margin-bottom:14px">
-        Cloudflare Web Analytics 연결로 방문자 통계를 확인하세요.<br>
-        Cloudflare 대시보드에서 사이트를 등록한 뒤 아래에 입력하세요.
-      </p>
-      <div class="dp-label">Account ID</div>
-      <input class="dp-input" id="cf-account-id" type="text" placeholder="32자리 영문숫자" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Cloudflare 대시보드 오른쪽 사이드바 → Account ID</div>
-      <div class="dp-label">Site Tag</div>
-      <input class="dp-input" id="cf-site-tag" type="text" placeholder="Web Analytics 사이트 태그 (32자리)" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">Analytics → Web Analytics → 사이트 선택 → 설정 → Site Tag</div>
-      <div class="dp-label">API Token</div>
-      <input class="dp-input" id="cf-api-token" type="password" placeholder="Account Analytics: Read 권한 필요" />
-      <div style="font-size:0.72rem;color:#9ca3af;margin:3px 0 10px">내 프로필 → API Tokens → Create Token → Account Analytics: Read</div>
-      <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px">설정 저장 및 연결</button>
-
-      <div class="st-grid" id="cf-stat-cards" style="display:none" onclick="fetchCFStats()" title="탭하면 새로고침">
+      <div class="st-grid" id="cf-stat-cards" onclick="fetchClickCounts()" title="탭하면 새로고침">
         <div class="st-card">
-          <div class="st-card-title">지난 1시간</div>
-          <div class="st-card-num" id="cf-stat-hour">—</div>
-          <div class="st-card-unit">방문</div>
+          <div class="st-card-title">오늘 방문</div>
+          <div class="st-card-num" id="kv-stat-today">—</div>
+          <div class="st-card-unit">페이지뷰</div>
         </div>
         <div class="st-card">
-          <div class="st-card-title">오늘</div>
-          <div class="st-card-num" id="cf-stat-today">—</div>
-          <div class="st-card-unit">방문</div>
+          <div class="st-card-title">이번달</div>
+          <div class="st-card-num" id="kv-stat-month">—</div>
+          <div class="st-card-unit">페이지뷰</div>
         </div>
         <div class="st-card">
-          <div class="st-card-title">전체 (90일)</div>
-          <div class="st-card-num" id="cf-stat-total">—</div>
-          <div class="st-card-unit">방문</div>
+          <div class="st-card-title">누적</div>
+          <div class="st-card-num" id="kv-stat-total">—</div>
+          <div class="st-card-unit">페이지뷰</div>
         </div>
       </div>
+      <p id="kv-stat-error" style="display:none;font-size:0.78rem;color:#dc2626;margin-top:8px;text-align:center"></p>
 
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6">
+        <div class="dp-label" style="margin-top:0;color:#9ca3af;font-weight:500">Cloudflare Analytics 연결 (선택사항)</div>
+        <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:10px">CF 대시보드에서 더 자세한 통계를 보려면 연결하세요</div>
+        <div class="dp-label">Account ID</div>
+        <input class="dp-input" id="cf-account-id" type="text" placeholder="32자리 영문숫자" />
+        <div class="dp-label" style="margin-top:8px">Site Tag</div>
+        <input class="dp-input" id="cf-site-tag" type="text" placeholder="Web Analytics 사이트 태그 (32자리)" />
+        <div class="dp-label" style="margin-top:8px">API Token</div>
+        <input class="dp-input" id="cf-api-token" type="password" placeholder="Account Analytics: Read 권한 필요" />
+        <button class="dp-save-btn" onclick="saveCFSettings()" style="margin-bottom:12px;margin-top:10px">CF 설정 저장</button>
         <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" class="st-connect-btn" style="text-decoration:none;display:block;text-align:center;background:linear-gradient(135deg,#f6821f,#fbad41)">
           📊 Cloudflare Analytics 대시보드 열기
         </a>
@@ -610,12 +607,26 @@
   }
 
   async function fetchClickCounts() {
+    const errEl = document.getElementById('kv-stat-error');
     try {
       const res = await fetch(`${TRACKER_URL}/counts?site=${SITE_ID}`);
+      if (!res.ok) throw new Error(`Worker 오류 ${res.status}`);
       const data = await res.json();
-      const total = data.total || data;
+      const total = data.total || {};
       const today = data.today || {};
       const month = data.month || {};
+
+      const fmt = n => n >= 10000 ? (n/1000).toFixed(1)+'k' : n.toLocaleString();
+      const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = fmt(val); };
+      const pvT = today['pv'] || 0, pvM = month['pv'] || 0, pvA = total['pv'] || 0;
+      setEl('kv-stat-today', pvT);
+      setEl('kv-stat-month', pvM);
+      setEl('kv-stat-total', pvA);
+      setEl('stat-today',  pvT);
+      setEl('stat-month',  pvM);
+      setEl('stat-total',  pvA);
+      if (errEl) errEl.style.display = 'none';
+
       document.querySelectorAll('.block-item').forEach(item => {
         const link = config.links.find(l => l.id === item.dataset.id);
         if (link && link.num) {
@@ -624,7 +635,9 @@
           if (el) el.innerHTML = `오늘 <b>${today[n]||0}</b> · 이번달 <b>${month[n]||0}</b> · 누적 <b>${total[n]||0}</b>`;
         }
       });
-    } catch(e) {}
+    } catch(e) {
+      if (errEl) { errEl.textContent = '통계 로드 실패: ' + e.message; errEl.style.display = 'block'; }
+    }
   }
 
   function blockHTML(link, idx) {
@@ -955,10 +968,7 @@
     document.getElementById('cf-account-id').value = localStorage.getItem('cf_account_id') || '';
     document.getElementById('cf-site-tag').value   = localStorage.getItem('cf_site_tag')   || '';
     document.getElementById('cf-api-token').value  = localStorage.getItem('cf_api_token')  || '';
-    if (localStorage.getItem('cf_api_token') && localStorage.getItem('cf_site_tag')) {
-      document.getElementById('cf-stat-cards').style.display = 'grid';
-      fetchCFStats();
-    }
+    fetchClickCounts();
   }
 
   function saveCFSettings() {
@@ -968,10 +978,6 @@
     if (accountId) localStorage.setItem('cf_account_id', accountId);
     if (siteTag)   localStorage.setItem('cf_site_tag',   siteTag);
     if (apiToken)  localStorage.setItem('cf_api_token',  apiToken);
-    if (apiToken && siteTag) {
-      document.getElementById('cf-stat-cards').style.display = 'grid';
-      fetchCFStats();
-    }
     alert('저장됐습니다.');
   }
 
@@ -995,21 +1001,10 @@
       const todayV = sumV(acct.todayVisits);
       const totalV = sumV(acct.totalVisits);
 
-      const fmt = n => n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
-      document.getElementById('cf-stat-hour').textContent  = fmt(hourV);
-      document.getElementById('cf-stat-today').textContent = fmt(todayV);
-      document.getElementById('cf-stat-total').textContent = fmt(totalV);
-      document.getElementById('stat-realtime').textContent = fmt(hourV);
-      document.getElementById('stat-today').textContent    = fmt(todayV);
-      document.getElementById('stat-total').textContent    = fmt(totalV);
-      const old = document.getElementById('cf-stat-error');
-      if (old) old.remove();
+      // CF stats are optional; just log if they work
+      console.log('CF stats:', hourV, todayV, totalV);
     } catch(e) {
-      console.error('CF stats 오류:', e.message);
-      ['cf-stat-hour','cf-stat-today','cf-stat-total'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.textContent = '!'; el.title = e.message; }
-      });
+      console.warn('CF stats 오류 (선택사항):', e.message);
     }
   }
 

@@ -130,6 +130,11 @@
       }).catch(()=>{});
     }
 
+    fetch(TRACKER_URL + '/click', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({site: SITE_ID, num: 'pv'})
+    }).catch(()=>{});
+
     function copySiteLink() {
       const url = location.origin + location.pathname;
       navigator.clipboard.writeText(url).then(() => showToast('사이트 링크가 복사됐어요! 🔗')).catch(() => {
