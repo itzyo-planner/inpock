@@ -195,6 +195,8 @@
     #save-bar-inner { max-width: 480px; margin: 0 auto; }
     .save-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; background: linear-gradient(135deg,#fb923c,#f472b6); color: white; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity 0.2s; }
     .save-btn:disabled { opacity: 0.6; cursor: default; }
+    @keyframes save-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(251,146,60,0.7);transform:scale(1)} 50%{box-shadow:0 0 0 8px rgba(251,146,60,0);transform:scale(1.02)} }
+    .save-btn.unsaved { animation: save-pulse 0.9s ease-in-out infinite; }
     .save-success { text-align: center; font-size: 0.78rem; color: #16a34a; margin-top: 6px; }
     .save-error { text-align: center; font-size: 0.78rem; color: #dc2626; margin-top: 6px; }
 
@@ -1021,6 +1023,7 @@
     document.getElementById('save-bar').style.display = 'block';
     document.getElementById('save-ok').style.display  = 'none';
     document.getElementById('save-err').style.display = 'none';
+    document.getElementById('save-btn').classList.add('unsaved');
   }
 
   async function saveAll() {
@@ -1082,6 +1085,7 @@
     } finally {
       btn.disabled = false;
       btn.innerHTML = '저장하기 (자동 배포)';
+      btn.classList.remove('unsaved');
     }
   }
 
