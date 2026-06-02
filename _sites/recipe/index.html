@@ -193,12 +193,16 @@
     }
 
     function renderFiltered() {
-      const q = searchQuery.toLowerCase();
+      const q = searchQuery.toLowerCase().trim();
+      const isNumQuery = /^\d+$/.test(q);
       const filtered = allLinks.filter(l => {
         if (l.enabled === false) return false;
         if (directNum) return String(l.num) === String(directNum);
         if (activeCategory !== '전체' && l.category !== activeCategory) return false;
-        if (q && !(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q) && String(l.num||'') !== q.trim()) return false;
+        if (q) {
+          if (isNumQuery) return String(l.num || '') === q;
+          if (!(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q)) return false;
+        }
         return true;
       });
       const container = document.getElementById('links-container');
