@@ -640,12 +640,16 @@
   async function fetchClickCounts() {
     try {
       const res = await fetch(`${TRACKER_URL}/counts?site=${SITE_ID}`);
-      const counts = await res.json();
+      const data = await res.json();
+      const total = data.total || data;
+      const today = data.today || {};
+      const month = data.month || {};
       document.querySelectorAll('.block-item').forEach(item => {
         const link = config.links.find(l => l.id === item.dataset.id);
         if (link && link.num) {
+          const n = String(link.num);
           const el = item.querySelector('.b-count');
-          if (el) el.textContent = '총 ' + (counts[String(link.num)] || 0);
+          if (el) el.innerHTML = `오늘 <b>${today[n]||0}</b> · 이번달 <b>${month[n]||0}</b>`;
         }
       });
     } catch(e) {}
