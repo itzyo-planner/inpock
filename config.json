@@ -166,6 +166,27 @@
       "enabled": true,
       "num": 16,
       "category": "생활용품"
+    },
+    {
+      "id": "link-1780392587723",
+      "type": "link",
+      "title": "",
+      "desc": "",
+      "url": "",
+      "thumbnail": "",
+      "enabled": true,
+      "num": 2
+    },
+    {
+      "id": "link-1780392601558",
+      "type": "link",
+      "title": "캔메이크 실키 플레어 아이즈 섀도우 팔레트",
+      "desc": "입자가 수분 머금은 듯 고와서 하루 종일 투명한 음영 유지해 줌",
+      "url": "https://link.coupang.com/a/efIQHjqRXg",
+      "thumbnail": "https://t3a.coupangcdn.com/thumbnails/remote/212x212ex/image/vendor_inventory/2c2f/92f3f9ada71b0b667353353fdbcefc14987567b2ced99a8e01b7e18c7dc1.jpg",
+      "enabled": true,
+      "num": 8,
+      "category": "뷰티"
     }
   ],
   "threads": "https://www.threads.com/@itzyo_insight",
