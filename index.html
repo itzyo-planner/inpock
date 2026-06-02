@@ -205,7 +205,7 @@
         if (directNum) return String(l.num) === String(directNum);
         if (activeCategory !== '전체' && l.category !== activeCategory) return false;
         if (q) {
-          if (isNumQuery) return String(l.num || '') === q;
+          if (isNumQuery) return String(l.num || '').includes(q);
           if (!(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q)) return false;
         }
         return true;
