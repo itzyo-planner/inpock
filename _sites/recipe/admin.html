@@ -104,6 +104,9 @@
     .arr-btn:disabled { opacity: 0.25; cursor: default; }
     .drag-dots { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 2px; cursor: grab; }
     .drag-dots span { width: 3px; height: 3px; border-radius: 50%; background: #d1d5db; display: block; }
+    .drag-dots:active { cursor: grabbing; }
+    .block-item.dragging { opacity: 0.4; }
+    .block-item.drag-over { outline: 2px solid #16a34a; background: #f0fdf4; border-radius: 12px; }
 
     .b-main { flex: 1; padding: 10px 12px 10px 4px; min-width: 0; }
     .b-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -582,6 +585,54 @@
     }
     list.innerHTML = config.links.map((link, idx) => blockHTML(link, idx)).join('');
     fetchClickCounts();
+    initDragAndDrop();
+  }
+
+  function initDragAndDrop() {
+    const list = document.getElementById('block-list');
+    let dragId = null;
+
+    list.querySelectorAll('.block-item').forEach(item => {
+      item.addEventListener('mousedown', e => {
+        item.draggable = !!e.target.closest('.b-left');
+      });
+
+      item.addEventListener('dragstart', e => {
+        dragId = item.dataset.id;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => item.classList.add('dragging'), 0);
+      });
+
+      item.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!dragId || item.dataset.id === dragId) return;
+        list.querySelectorAll('.block-item').forEach(i => i.classList.remove('drag-over'));
+        item.classList.add('drag-over');
+      });
+
+      item.addEventListener('dragleave', e => {
+        if (!item.contains(e.relatedTarget)) item.classList.remove('drag-over');
+      });
+
+      item.addEventListener('drop', e => {
+        e.preventDefault();
+        const targetId = item.dataset.id;
+        if (!dragId || dragId === targetId) return;
+        const fromIdx = config.links.findIndex(l => l.id === dragId);
+        const toIdx   = config.links.findIndex(l => l.id === targetId);
+        if (fromIdx < 0 || toIdx < 0) return;
+        const [moved] = config.links.splice(fromIdx, 1);
+        config.links.splice(toIdx, 0, moved);
+        dragId = null;
+        markUnsaved();
+        renderBlocks();
+      });
+
+      item.addEventListener('dragend', () => {
+        dragId = null;
+        list.querySelectorAll('.block-item').forEach(i => i.classList.remove('dragging', 'drag-over'));
+      });
+    });
   }
 
   async function fetchClickCounts() {
