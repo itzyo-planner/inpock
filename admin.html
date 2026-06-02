@@ -1018,9 +1018,10 @@
       const acct = data?.data?.viewer?.accounts?.[0];
       if (!acct) throw new Error('계정 데이터 없음');
 
-      const hourV  = acct.hourVisits?.[0]?.sum?.visits  ?? 0;
-      const todayV = acct.todayVisits?.[0]?.sum?.visits ?? 0;
-      const totalV = acct.totalVisits?.[0]?.sum?.visits ?? 0;
+      const sumV = arr => (arr||[]).reduce((s,g) => s + (g?.sum?.visits||0), 0);
+      const hourV  = sumV(acct.hourVisits);
+      const todayV = sumV(acct.todayVisits);
+      const totalV = sumV(acct.totalVisits);
 
       const fmt = n => n >= 10000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
       document.getElementById('cf-stat-hour').textContent  = fmt(hourV);
