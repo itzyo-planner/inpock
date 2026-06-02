@@ -7,6 +7,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; min-height: 100vh; }
@@ -592,49 +593,19 @@
 
   function initDragAndDrop() {
     const list = document.getElementById('block-list');
-
-    list.querySelectorAll('.drag-dots').forEach(handle => {
-      let dragId = null;
-
-      handle.addEventListener('pointerdown', e => {
-        e.preventDefault();
-        dragId = handle.closest('.block-item').dataset.id;
-        handle.closest('.block-item').classList.add('dragging');
-        handle.setPointerCapture(e.pointerId);
-      });
-
-      handle.addEventListener('pointermove', e => {
-        if (!dragId) return;
-        const dragging = list.querySelector('.block-item.dragging');
-        dragging.style.pointerEvents = 'none';
-        const under = document.elementFromPoint(e.clientX, e.clientY);
-        dragging.style.pointerEvents = '';
-        const target = under?.closest?.('.block-item');
-        list.querySelectorAll('.block-item').forEach(i => i.classList.remove('drag-over'));
-        if (target && target.dataset.id !== dragId) target.classList.add('drag-over');
-      });
-
-      handle.addEventListener('pointerup', () => {
-        if (!dragId) return;
-        const over = list.querySelector('.block-item.drag-over');
-        list.querySelectorAll('.block-item').forEach(i => i.classList.remove('dragging', 'drag-over'));
-        if (over) {
-          const fromIdx = config.links.findIndex(l => l.id === dragId);
-          const toIdx   = config.links.findIndex(l => l.id === over.dataset.id);
-          if (fromIdx >= 0 && toIdx >= 0) {
-            const [moved] = config.links.splice(fromIdx, 1);
-            config.links.splice(toIdx, 0, moved);
-            markUnsaved();
-            renderBlocks();
-          }
-        }
-        dragId = null;
-      });
-
-      handle.addEventListener('pointercancel', () => {
-        dragId = null;
-        list.querySelectorAll('.block-item').forEach(i => i.classList.remove('dragging', 'drag-over'));
-      });
+    if (!list || list.querySelector('.bl-empty')) return;
+    if (window._sortable) { window._sortable.destroy(); window._sortable = null; }
+    window._sortable = Sortable.create(list, {
+      handle: '.drag-dots',
+      animation: 150,
+      ghostClass: 'drag-over',
+      chosenClass: 'dragging',
+      onEnd(evt) {
+        if (evt.oldIndex === evt.newIndex) return;
+        const [moved] = config.links.splice(evt.oldIndex, 1);
+        config.links.splice(evt.newIndex, 0, moved);
+        markUnsaved();
+      }
     });
   }
 
@@ -650,7 +621,7 @@
         if (link && link.num) {
           const n = String(link.num);
           const el = item.querySelector('.b-count');
-          if (el) el.innerHTML = `오늘 <b>${today[n]||0}</b> · 이번달 <b>${month[n]||0}</b>`;
+          if (el) el.innerHTML = `오늘 <b>${today[n]||0}</b> · 이번달 <b>${month[n]||0}</b> · 누적 <b>${total[n]||0}</b>`;
         }
       });
     } catch(e) {}
