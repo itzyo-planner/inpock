@@ -663,8 +663,10 @@
   // 블록 조작
   // ════════════════════════════════════════
   function nextNum() {
-    const nums = config.links.filter(l => l.num).map(l => Number(l.num));
-    return nums.length ? Math.max(...nums) + 1 : 1;
+    const nums = new Set(config.links.filter(l => l.num).map(l => Number(l.num)));
+    let n = 1;
+    while (nums.has(n)) n++;
+    return n;
   }
 
   function addLink() {
