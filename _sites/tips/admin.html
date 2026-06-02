@@ -968,35 +968,9 @@
     const apiToken  = localStorage.getItem('cf_api_token');
     if (!accountId || !siteTag || !apiToken) return;
 
-    const now        = new Date();
-    const hourAgo    = new Date(now - 3600000).toISOString();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-    const allStart   = '2024-01-01T00:00:00Z';
-
-    const query = `{
-      viewer {
-        accounts(filter: {accountTag: "${accountId}"}) {
-          hourVisits: rumPageloadEventsAdaptiveGroups(
-            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${hourAgo}"}]}
-            limit: 1
-          ) { sum { visits } }
-          todayVisits: rumPageloadEventsAdaptiveGroups(
-            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${todayStart}"}]}
-            limit: 1
-          ) { sum { visits } }
-          totalVisits: rumPageloadEventsAdaptiveGroups(
-            filter: {AND: [{siteTag: "${siteTag}"}, {datetime_geq: "${allStart}"}]}
-            limit: 1
-          ) { sum { visits } }
-        }
-      }
-    }`;
-
     try {
-      const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
+      const res = await fetch(`${TRACKER_URL}/stats?account=${accountId}&site_tag=${siteTag}`, {
+        headers: { 'x-cf-token': apiToken }
       });
       const data = await res.json();
       if (data.errors) throw new Error(data.errors[0]?.message || 'GraphQL 오류');
