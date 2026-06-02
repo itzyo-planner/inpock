@@ -979,6 +979,16 @@
       document.getElementById('stat-total').textContent    = fmt(totalV);
     } catch(e) {
       console.error('CF stats 오류:', e.message);
+      ['cf-stat-hour','cf-stat-today','cf-stat-total'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '오류';
+      });
+      const cards = document.getElementById('cf-stat-cards');
+      if (cards) {
+        let msg = document.getElementById('cf-stat-error');
+        if (!msg) { msg = document.createElement('p'); msg.id = 'cf-stat-error'; msg.style.cssText='font-size:0.75rem;color:#ef4444;margin:6px 0 0;word-break:break-all'; cards.after(msg); }
+        msg.textContent = '오류: ' + e.message;
+      }
     }
   }
 
