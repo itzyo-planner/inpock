@@ -199,6 +199,17 @@
       "enabled": true,
       "num": 17,
       "category": ""
+    },
+    {
+      "id": "link-1780459592169",
+      "type": "link",
+      "title": "넷플릭스 기프트박",
+      "desc": "넷플릭스 최애 드라마 아이템들이 쏟아짐",
+      "url": "https://link.coupang.com/a/eg0Ej8Mhqu",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/657x657q90trim/image/vendor_inventory/2f2e/f9f843067c6e3cd71808de4a16062b075f391917d178111b220d24d94395.jpg",
+      "enabled": true,
+      "num": 18,
+      "category": "최애템"
     }
   ],
   "threads": "https://www.threads.com/@itzyo_insight",
