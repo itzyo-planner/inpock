@@ -336,6 +336,8 @@
     <input class="dp-input" type="text" id="dp-name" placeholder="잇지요 꿀팁" />
     <div class="dp-label">소개글</div>
     <textarea class="dp-input" id="dp-bio" placeholder="소개글 (줄바꿈 가능)"></textarea>
+    <div class="dp-label" style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6;">💼 비지니스 제안 이메일 <span style="font-weight:400;color:#9ca3af">(비워두면 표시 안 됨)</span></div>
+    <input class="dp-input" type="email" id="dp-email" placeholder="contact@example.com" />
     <div class="dp-label" style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6;">소셜 링크 <span style="font-weight:400;color:#9ca3af">(비워두면 표시 안 됨)</span></div>
     <div style="font-size:0.72rem;color:#9ca3af;margin-bottom:8px">각 2개까지 입력 가능</div>
     <div class="dp-label" style="margin-top:0">📸 인스타그램</div>
@@ -925,6 +927,7 @@
     document.getElementById('dp-youtube').value   = config.youtube   || '';
     document.getElementById('dp-youtube2').value  = config.youtube2  || '';
     document.getElementById('dp-ga-id').value     = config.ga_id     || '';
+    document.getElementById('dp-email').value     = config.email     || '';
     if (config.profileImage) {
       const prev = document.getElementById('dp-av-preview');
       if (prev) {
@@ -956,6 +959,7 @@
     config.youtube   = document.getElementById('dp-youtube').value.trim();
     config.youtube2  = document.getElementById('dp-youtube2').value.trim();
     config.ga_id     = document.getElementById('dp-ga-id').value.trim();
+    config.email     = document.getElementById('dp-email').value.trim();
     document.getElementById('prof-name').textContent = config.name || '잇지요 꿀팁';
     markUnsaved();
     alert('디자인이 적용됐습니다. 저장 버튼을 눌러 배포하세요.');

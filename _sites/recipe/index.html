@@ -34,6 +34,10 @@
           </p>
         </div>
       </div>
+      <a id="contact-email-btn" href="#" style="display:none;align-items:center;gap:6px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:20px;padding:5px 14px;font-size:0.8rem;font-weight:600;color:#15803d;text-decoration:none;margin-top:8px;width:fit-content">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        비지니스 제안
+      </a>
       <div class="socials" id="socials"></div>
     </div>
 
@@ -242,6 +246,11 @@
           document.getElementById('avatar-fallback').style.display = 'none';
         }
         if (c.ga_id) loadGA(c.ga_id);
+        if (c.email) {
+          const btn = document.getElementById('contact-email-btn');
+          btn.href = 'mailto:' + c.email;
+          btn.style.display = 'inline-flex';
+        }
         renderSocials(c);
         if (Array.isArray(c.links)) {
           allLinks = c.links;
