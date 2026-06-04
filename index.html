@@ -53,7 +53,7 @@
 
     <a href="./" class="back-btn" id="back-btn" style="display:none">← 전체 상품 보기</a>
 
-    <div class="filter-wrap" id="filter-wrap" style="display:none">
+    <div class="filter-wrap" id="filter-wrap">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input class="search-input" type="text" id="search-input" placeholder="상품 검색..." oninput="onSearch(this.value)" />
@@ -160,6 +160,7 @@
     let activeCategory = '전체';
     let searchQuery = '';
     let directNum = new URLSearchParams(location.search).get('p');
+    if (directNum) document.getElementById('filter-wrap').style.display = 'none';
 
     function linkCardHTML(link) {
       if (link.type === 'text') {
@@ -253,11 +254,9 @@
         if (Array.isArray(c.links)) {
           allLinks = c.links;
           if (directNum) {
-            document.getElementById('filter-wrap').style.display = 'none';
             document.getElementById('back-btn').style.display = 'block';
           } else {
             const hasCats = c.links.some(l => l.category);
-            document.getElementById('filter-wrap').style.display = hasCats ? 'flex' : 'block';
             if (!hasCats) document.getElementById('cat-tabs').style.display = 'none';
             renderCategoryTabs();
           }
