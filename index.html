@@ -7,7 +7,7 @@
   <meta name="description" content="itzyo 잇지요 링크 모음" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=optional" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -21,7 +21,7 @@
     <div class="profile">
       <div class="profile-row">
         <div class="avatar" id="avatar">
-          <img id="avatar-img" src="images/profile.jpg" alt="프로필 사진" class="avatar-img"
+          <img id="avatar-img" src="images/profile.jpg" alt="프로필 사진" class="avatar-img" width="68" height="68"
             onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';" />
           <span id="avatar-fallback" class="avatar-fallback">잇</span>
         </div>
@@ -62,20 +62,9 @@
     </div>
 
     <div class="links" id="links-container">
-      <a href="https://link.coupang.com/a/ecEPYO" target="_blank" rel="noopener noreferrer" class="link-card">
-        <div class="link-icon red">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </div>
-        <div class="link-text">
-          <span class="link-title">쿠팡파트너스</span>
-          <span class="link-desc">추천 상품 모음</span>
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="arrow">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
+      <div class="link-skeleton"></div>
+      <div class="link-skeleton"></div>
+      <div class="link-skeleton"></div>
     </div>
 
     <footer>© 2026 itzyo · 잇지요</footer>

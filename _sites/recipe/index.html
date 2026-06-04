@@ -7,7 +7,7 @@
   <meta name="description" content="잇지요 레시피 - 맛있는 레시피와 주방 필수템 추천" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=optional" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -15,7 +15,7 @@
     <div class="profile">
       <div class="profile-row">
         <div class="avatar" id="avatar">
-          <img id="avatar-img" src="images/profile.jpg" alt="프로필 사진" class="avatar-img"
+          <img id="avatar-img" src="images/profile.jpg" alt="프로필 사진" class="avatar-img" width="68" height="68"
             onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';" />
           <span id="avatar-fallback" class="avatar-fallback">레</span>
         </div>
@@ -52,20 +52,9 @@
     </div>
 
     <div class="links" id="links-container">
-      <a href="#" class="link-card">
-        <div class="link-icon green">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        </div>
-        <div class="link-text">
-          <span class="link-title">레시피 불러오는 중...</span>
-          <span class="link-desc">잠시만 기다려주세요</span>
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="arrow">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
+      <div class="link-skeleton"></div>
+      <div class="link-skeleton"></div>
+      <div class="link-skeleton"></div>
     </div>
 
     <footer>© 2026 itzyo · 잇지요 레시피</footer>
