@@ -9,6 +9,7 @@ body {
   background: linear-gradient(180deg, #fff7ed 0%, #ffffff 60%);
   min-height: 100vh;
   color: #1f2937;
+  scrollbar-gutter: stable;
 }
 
 /* 공지 티커 */
@@ -18,6 +19,7 @@ body {
   z-index: 50;
   overflow: hidden;
   padding: 8px 0;
+  height: 34px;
   background: linear-gradient(90deg, #f43f6e, #e879f9, #f472b6, #f43f6e);
   background-size: 300% 100%;
   animation: ticker-gradient 5s linear infinite;

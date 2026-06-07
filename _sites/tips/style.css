@@ -9,6 +9,7 @@ body {
   background: linear-gradient(180deg, #fffbeb 0%, #ffffff 60%);
   min-height: 100vh;
   color: #1f2937;
+  scrollbar-gutter: stable;
 }
 
 .container {
