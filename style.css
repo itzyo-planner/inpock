@@ -135,11 +135,33 @@ body {
   line-height: 1.55;
 }
 
+/* 비지니스 제안 버튼 */
+.contact-email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c2410c;
+  text-decoration: none;
+  margin-top: 8px;
+  width: fit-content;
+  visibility: hidden;
+}
+.contact-email-btn.show {
+  visibility: visible;
+}
+
 /* 소셜 */
 .socials {
   display: flex;
   gap: 7px;
   margin-top: 8px;
+  min-height: 32px;
 }
 
 .social-btn {
