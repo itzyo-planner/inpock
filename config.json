@@ -364,6 +364,17 @@
       "enabled": true,
       "num": 32,
       "category": "생활용품"
+    },
+    {
+      "id": "link-1780885658194",
+      "type": "link",
+      "title": "존슨즈 베이비 오일",
+      "desc": "헤어팩의 반전",
+      "url": "https://link.coupang.com/a/epb8YkjI9A",
+      "thumbnail": "https://thumbnail6.coupangcdn.com/thumbnails/remote/212x212ex/image/vendor_inventory/47bc/dfa7d06614f71f4d21da3c3ac9e62a2876ef22ffe7b7afc0833d6bbc4208.jpg",
+      "enabled": true,
+      "num": 33,
+      "category": "뷰티"
     }
   ],
   "threads": "https://www.threads.com/@itzyo_insight",
