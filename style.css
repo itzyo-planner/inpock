@@ -207,7 +207,7 @@ body {
 }
 
 .link-skeleton {
-  height: 70px;
+  height: 100px;
   border-radius: 16px;
   background: linear-gradient(90deg, #f3f4f6 25%, #e9eaeb 50%, #f3f4f6 75%);
   background-size: 200% 100%;
@@ -378,8 +378,8 @@ body {
 /* 링크 썸네일 */
 .link-thumb {
   flex-shrink: 0;
-  width: 58px;
-  height: 58px;
+  width: 72px;
+  height: 72px;
   border-radius: 12px;
   overflow: hidden;
   background: #f3f4f6;
