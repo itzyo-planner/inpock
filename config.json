@@ -474,6 +474,17 @@
       "enabled": true,
       "num": 42,
       "category": "헤어용품"
+    },
+    {
+      "id": "link-1780930860727",
+      "type": "link",
+      "title": "Jack & Rose 핸디형 스탠드 스팀다리미",
+      "desc": "말이 필요 없는 스팀 다리미계의 정석",
+      "url": "https://link.coupang.com/a/ep3XAGByLc",
+      "thumbnail": "https://t2c.coupangcdn.com/thumbnails/remote/212x212ex/image/vendor_inventory/641b/633cc165064e5d3ac47523055a3e6f578ebf28745586cafb77445ae894dd.jpg",
+      "enabled": true,
+      "num": 43,
+      "category": "생활용품"
     }
   ],
   "threads": "https://www.threads.com/@itzyo_insight",
