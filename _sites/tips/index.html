@@ -166,7 +166,7 @@
         else if (diff === 0) ddayBadge = `<span class="tips-badge dday-today">🔥 D-day</span>`;
       }
       return `
-    <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card" onclick="trackClick(${link.num||0},'${(link.title||'').replace(/'/g,"\\'")}')">
+    <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card" data-num="${link.num||''}" onclick="trackClick(${link.num||0},'${(link.title||'').replace(/'/g,"\\'")}')">
       ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon amber">${LINK_ICON_SVG}</div>`}
       <div class="link-text">
         <span class="link-title">${link.num ? `<span class="link-num">#${link.num}</span>` : ''}${link.title || ''}</span>
@@ -210,6 +210,7 @@
       container.innerHTML = filtered.length
         ? filtered.map(linkCardHTML).join('')
         : '<div class="no-result">꿀팁을 찾을 수 없습니다 😢</div>';
+      applyLinkStatuses();
     }
 
     function setCategory(cat) {
@@ -221,6 +222,35 @@
     function onSearch(val) {
       searchQuery = val;
       renderFiltered();
+    }
+
+    let linkStatuses = {};
+
+    function applyLinkStatuses() {
+      document.querySelectorAll('.link-card[data-num]').forEach(card => {
+        const num = card.dataset.num;
+        if (!num || linkStatuses[num] !== 'removed') return;
+        if (!card.classList.contains('link-removed')) {
+          card.classList.add('link-removed');
+          const lt = card.querySelector('.link-text');
+          if (lt && !lt.querySelector('.removed-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'removed-badge';
+            badge.textContent = '🚫 없어진 상품';
+            lt.appendChild(badge);
+          }
+        }
+      });
+    }
+
+    async function loadLinkStatuses() {
+      try {
+        const res = await fetch(`${TRACKER_URL}/link-status?site=${SITE_ID}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        linkStatuses = data.statuses || {};
+        applyLinkStatuses();
+      } catch (e) {}
     }
 
     (async () => {
@@ -257,6 +287,7 @@
             renderCategoryTabs();
           }
           renderFiltered();
+          loadLinkStatuses();
         }
       } catch (e) { /* 기본값 유지 */ }
     })();

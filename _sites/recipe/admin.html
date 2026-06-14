@@ -585,6 +585,7 @@
     }
     list.innerHTML = config.links.map((link, idx) => blockHTML(link, idx)).join('');
     fetchClickCounts();
+    fetchLinkStatuses();
     initDragAndDrop();
   }
 
@@ -638,6 +639,26 @@
     } catch(e) {
       if (errEl) { errEl.textContent = '통계 로드 실패: ' + e.message; errEl.style.display = 'block'; }
     }
+  }
+
+  async function fetchLinkStatuses() {
+    try {
+      const res = await fetch(`${TRACKER_URL}/link-status?site=${SITE_ID}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const statuses = data.statuses || {};
+      document.querySelectorAll('.block-item').forEach(item => {
+        const link = config.links.find(l => l.id === item.dataset.id);
+        if (!link || !link.num) return;
+        if (statuses[String(link.num)] !== 'removed') return;
+        const row = item.querySelector('.b-row3') || item.querySelector('.b-count')?.parentElement;
+        if (!row || row.querySelector('.status-chip')) return;
+        const chip = document.createElement('span');
+        chip.className = 'status-chip status-removed';
+        chip.textContent = '🚫 없어진 상품';
+        row.insertBefore(chip, row.firstChild);
+      });
+    } catch(e) {}
   }
 
   function blockHTML(link, idx) {
