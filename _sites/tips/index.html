@@ -81,7 +81,7 @@
       if (!entries.length) { socials.innerHTML = ''; return; }
       socials.innerHTML = entries.map(e => {
         const ic = SOCIAL_ICONS[e.type];
-        return `<a href="${e.url}" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="${e.label}" style="color:${ic.color}">${ic.svg}</a>`;
+        return `<a href="${safeUrl(e.url)}" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="${esc(e.label)}" style="color:${ic.color}">${ic.svg}</a>`;
       }).join('');
     }
 
@@ -144,6 +144,14 @@
       t._tid = setTimeout(() => t.classList.remove('show'), 2200);
     }
 
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function safeUrl(url) {
+      if (!url) return '#';
+      try { const u = new URL(url); return (u.protocol==='http:'||u.protocol==='https:') ? url : '#'; } catch(e) { return '#'; }
+    }
+
     let allLinks = [];
     let activeCategory = '전체';
     let searchQuery = '';
@@ -152,10 +160,10 @@
 
     function linkCardHTML(link) {
       if (link.type === 'text') {
-        return `<div class="text-block">${(link.title || '').replace(/\n/g, '<br>')}</div>`;
+        return `<div class="text-block">${esc(link.title || '').replace(/\n/g, '<br>')}</div>`;
       }
       const thumb = link.thumbnail
-        ? `<img src="${link.thumbnail}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
+        ? `<img src="${safeUrl(link.thumbnail)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=''" />`
         : '';
       const shareBtn = link.num ? `<button class="share-btn" onclick="event.preventDefault();event.stopPropagation();copyLink(${link.num})" title="링크 복사"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></button>` : '';
       // D-day badge
@@ -166,11 +174,11 @@
         else if (diff === 0) ddayBadge = `<span class="tips-badge dday-today">🔥 D-day</span>`;
       }
       return `
-    <a href="${link.url || '#'}" target="_blank" rel="noopener noreferrer" class="link-card" data-num="${link.num||''}" onclick="trackClick(${link.num||0},'${(link.title||'').replace(/'/g,"\\'")}')">
+    <a href="${safeUrl(link.url)}" target="_blank" rel="noopener noreferrer" class="link-card" data-num="${link.num||''}" data-title="${esc(link.title||'')}" onclick="trackClick(${link.num||0},this.dataset.title)">
       ${link.thumbnail ? `<div class="link-thumb">${thumb}</div>` : `<div class="link-icon amber">${LINK_ICON_SVG}</div>`}
       <div class="link-text">
-        <span class="link-title">${link.num ? `<span class="link-num">#${link.num}</span>` : ''}${link.title || ''}</span>
-        ${link.desc ? `<span class="link-desc">${link.desc}</span>` : ''}
+        <span class="link-title">${link.num ? `<span class="link-num">#${link.num}</span>` : ''}${esc(link.title || '')}</span>
+        ${link.desc ? `<span class="link-desc">${esc(link.desc)}</span>` : ''}
         ${ddayBadge}
       </div>
       ${shareBtn}
@@ -189,7 +197,7 @@
       if (cats.length === 0) { document.getElementById('cat-tabs').innerHTML = ''; return; }
       const all = ['전체', ...cats];
       document.getElementById('cat-tabs').innerHTML = all.map(cat =>
-        `<button class="cat-tab${cat === activeCategory ? ' active' : ''}" onclick="setCategory('${cat}')">${cat}</button>`
+        `<button class="cat-tab${cat === activeCategory ? ' active' : ''}" data-cat="${esc(cat)}" onclick="setCategory(this.dataset.cat)">${esc(cat)}</button>`
       ).join('');
     }
 
@@ -261,7 +269,7 @@
 
         if (c.name)   document.getElementById('profile-name').textContent = c.name;
         if (c.handle) document.getElementById('profile-handle').textContent = c.handle;
-        if (c.bio)    document.getElementById('profile-bio').innerHTML = c.bio.replace(/\n/g, '<br>');
+        if (c.bio)    document.getElementById('profile-bio').innerHTML = esc(c.bio).replace(/\n/g, '<br>');
         if (c.profileImage) {
           const img = document.getElementById('avatar-img');
           img.src = c.profileImage + '?t=' + Date.now();
