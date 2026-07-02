@@ -243,7 +243,19 @@
         if (c.ga_id) loadGA(c.ga_id);
         if (c.email) {
           const btn = document.getElementById('contact-email-btn');
-          btn.href = 'mailto:' + c.email;
+          const _email = c.email;
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            navigator.clipboard.writeText(_email).then(() => {
+              showToast('📧 ' + _email + ' · 복사됐어요!');
+            }).catch(() => {
+              const el = document.createElement('textarea');
+              el.value = _email; el.style.position = 'fixed'; el.style.opacity = '0';
+              document.body.appendChild(el); el.select(); document.execCommand('copy');
+              document.body.removeChild(el);
+              showToast('📧 ' + _email + ' · 복사됐어요!');
+            });
+          });
           btn.classList.add('show');
         }
         renderSocials(c);
