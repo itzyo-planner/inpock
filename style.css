@@ -151,9 +151,12 @@ body {
   margin-top: 8px;
   width: fit-content;
   visibility: hidden;
+  pointer-events: none;
 }
 .contact-email-btn.show {
   visibility: visible;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* 소셜 */
