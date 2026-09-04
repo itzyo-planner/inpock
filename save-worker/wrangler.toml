@@ -1,0 +1,7 @@
+name = "inpock-save"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Secrets (set via CLI, NOT here):
+#   wrangler secret put ADMIN_PASSWORD
+#   wrangler secret put GH_TOKEN
