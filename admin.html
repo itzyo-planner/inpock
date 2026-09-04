@@ -436,6 +436,7 @@
   let hasUnsaved   = false;
   let activeMenuId = null;
   let editingId    = null;
+  let pendingSave  = false;
 
   let pendingProfileBase64 = null;
   const pendingThumbs = new Map(); // linkId → {base64, ext}
@@ -447,9 +448,7 @@
     const val = document.getElementById('pw-input').value;
     if (val === ADMIN_PASSWORD) {
       document.getElementById('pw-err').style.display = 'none';
-      const token = localStorage.getItem('gh_token');
-      if (token) loadAdmin();
-      else showScreen('token');
+      loadAdmin();
     } else {
       document.getElementById('pw-err').style.display = 'block';
     }
@@ -467,7 +466,13 @@
     btn.disabled = false;
     if (!ok) { document.getElementById('token-err').style.display = 'block'; return; }
     localStorage.setItem('gh_token', token);
-    loadAdmin();
+    if (pendingSave) {
+      pendingSave = false;
+      showScreen('admin');
+      saveAll();
+    } else {
+      loadAdmin();
+    }
   }
 
   async function verifyToken(token) {
@@ -509,32 +514,12 @@
   }
 
   async function fetchConfig() {
-    const token = localStorage.getItem('gh_token');
     try {
-      const res = await fetch(
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_PATH}?ref=${GITHUB_BRANCH}`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
-      );
-      if (res.status === 401) {
-        localStorage.removeItem('gh_token');
-        showScreen('token');
-        document.getElementById('token-err').textContent = '토큰이 만료됐거나 권한이 없습니다. 새 토큰을 입력해주세요.';
-        document.getElementById('token-err').style.display = 'block';
-        return;
-      }
-      if (!res.ok) throw new Error(`GitHub API 오류 (${res.status})`);
-      const data = await res.json();
-      if (!data.content) throw new Error('config.json을 찾을 수 없습니다');
-      configSha = data.sha;
+      const res = await fetch('./config.json?t=' + Date.now());
+      if (!res.ok) throw new Error(`config.json 로드 실패 (${res.status})`);
+      config = await res.json();
+      configSha = null; // sha는 저장 시 GitHub에서 조회
 
-      // TextDecoder로 UTF-8(한글 포함) 안전 디코딩
-      const bytes = Uint8Array.from(
-        atob(data.content.replace(/\n/g, '')),
-        c => c.charCodeAt(0)
-      );
-      config = JSON.parse(new TextDecoder().decode(bytes));
-
-      // id 없는 링크에 id 부여
       if (!config.links) config.links = [];
       config.links.forEach((l, i) => {
         if (!l.id) l.id = 'link-' + Date.now() + '-' + i;
@@ -543,7 +528,6 @@
       renderProfile();
       renderBlocks();
       populateDesignTab();
-      fetchImageSha(token);
     } catch (e) {
       console.error('config 로드 실패', e);
       document.getElementById('block-list').innerHTML =
@@ -1056,11 +1040,44 @@
     const okEl   = document.getElementById('save-ok');
     const errEl  = document.getElementById('save-err');
     okEl.style.display = errEl.style.display = 'none';
+
+    const token = localStorage.getItem('gh_token');
+    if (!token) {
+      pendingSave = true;
+      document.getElementById('token-err').textContent = '저장하려면 GitHub 토큰이 필요합니다.';
+      document.getElementById('token-err').style.display = 'block';
+      showScreen('token');
+      return;
+    }
+
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>저장 중...';
 
-    const token = localStorage.getItem('gh_token');
     try {
+      // configSha, imageSha 모름 → 저장 전 GitHub에서 조회
+      if (!configSha) {
+        const chk = await fetch(
+          `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_PATH}?ref=${GITHUB_BRANCH}`,
+          { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+        );
+        if (chk.status === 401) {
+          localStorage.removeItem('gh_token');
+          pendingSave = true;
+          btn.disabled = false; btn.innerHTML = '저장하기 (자동 배포)';
+          showScreen('token');
+          return;
+        }
+        if (chk.ok) configSha = (await chk.json()).sha;
+      }
+      if (!imageSha) {
+        try {
+          const chk = await fetch(
+            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${IMAGE_PATH}?ref=${GITHUB_BRANCH}`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+          );
+          if (chk.ok) imageSha = (await chk.json()).sha;
+        } catch {}
+      }
       // 1. 프로필 사진 업로드
       if (pendingProfileBase64) {
         const body = { message: 'chore: 프로필 사진 업데이트', content: pendingProfileBase64, branch: GITHUB_BRANCH };
