@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>관리자 | 잇지요 꿀팁</title>
+  <title>관리자 | 잇지요 꿿팟</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -217,8 +217,8 @@
 <!-- ① 비밀번호 -->
 <div id="screen-pw" class="auth-wrap">
   <div class="auth-card">
-    <div class="auth-logo">꿀</div>
-    <div class="auth-title">잇지요 꿀팁 관리자</div>
+    <div class="auth-logo">꿿</div>
+    <div class="auth-title">잇지요 꿿팟 관리자</div>
     <p class="auth-sub">비밀번호를 입력해주세요</p>
     <label class="auth-label">비밀번호</label>
     <input class="auth-input" type="password" id="pw-input" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')checkPassword()" />
@@ -227,44 +227,21 @@
   </div>
 </div>
 
-<!-- ② GitHub 토큰 -->
-<div id="screen-token" class="auth-wrap" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo">꿀</div>
-    <div class="auth-title">GitHub 연결</div>
-    <p class="auth-sub">저장 기능을 위해 한 번만 입력하면 됩니다</p>
-    <div class="token-info">
-      <strong>Personal Access Token 발급</strong>
-      <ol>
-        <li>GitHub → Settings → Developer settings</li>
-        <li>Personal access tokens → Tokens (classic)</li>
-        <li>Generate new token → <b>repo</b> 권한 체크 후 생성</li>
-        <li>생성된 토큰을 아래에 붙여넣기</li>
-      </ol>
-    </div>
-    <label class="auth-label">GitHub Token</label>
-    <input class="auth-input" type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-    <div class="err-msg" id="token-err">토큰이 올바르지 않습니다. 다시 확인해주세요.</div>
-    <button class="auth-btn" id="token-btn" onclick="saveToken()">연결하기</button>
-    <button class="auth-btn auth-btn-sec" onclick="resetToken()">뒤로가기</button>
-  </div>
-</div>
-
 <!-- ③ 관리자 페이지 -->
 <div id="page-admin">
 
   <!-- 상단 바 -->
   <div class="top-bar">
-    <span class="top-title">꿀팁 관리</span>
+    <span class="top-title">꿿팟 관리</span>
     <button class="top-logout" onclick="logout()">로그아웃</button>
   </div>
 
   <!-- 프로필 카드 -->
   <div class="prof-card">
     <div class="prof-row">
-      <div class="prof-av" id="prof-av"><span id="prof-av-letter">꿀</span></div>
+      <div class="prof-av" id="prof-av"><span id="prof-av-letter">꿿</span></div>
       <div>
-        <div class="prof-name" id="prof-name">잇지요 꿀팁</div>
+        <div class="prof-name" id="prof-name">잇지요 꿿팟</div>
         <div class="prof-url">itzyo-tips</div>
       </div>
     </div>
@@ -326,14 +303,14 @@
   <div class="tab-panel" id="tab-design">
     <div class="dp-label">프로필 사진</div>
     <div class="upload-row">
-      <div class="upload-preview" id="dp-av-preview"><span id="dp-av-letter">꿀</span></div>
+      <div class="upload-preview" id="dp-av-preview"><span id="dp-av-letter">꿿</span></div>
       <div class="upload-file-btn">
         <label class="upload-file-lbl" id="dp-photo-lbl">📷 사진 선택</label>
         <input type="file" accept="image/*" onchange="handleProfilePhoto(this)" />
       </div>
     </div>
     <div class="dp-label">닉네임</div>
-    <input class="dp-input" type="text" id="dp-name" placeholder="잇지요 꿀팁" />
+    <input class="dp-input" type="text" id="dp-name" placeholder="잇지요 꿿팟" />
     <div class="dp-label">소개글</div>
     <textarea class="dp-input" id="dp-bio" placeholder="소개글 (줄바꿈 가능)"></textarea>
     <div class="dp-label" style="margin-top:16px;padding-top:14px;border-top:1px solid #f3f4f6;">💼 비지니스 제안 이메일 <span style="font-weight:400;color:#9ca3af">(비워두면 표시 안 됨)</span></div>
@@ -419,28 +396,22 @@
   // ════════════════════════════════════════
   // 설정
   // ════════════════════════════════════════
-  const ADMIN_PASSWORD = "954369";
-  const GITHUB_OWNER   = "itzyo-planner";
-  const GITHUB_REPO    = "itzyo-tips";
-  const GITHUB_BRANCH  = "main";
-  const CONFIG_PATH    = "config.json";
-  const IMAGE_PATH     = "images/profile.jpg";
-  const OG_WORKER_URL  = "";
-  const TRACKER_URL    = 'https://inpock-tracker.kawoohyun.workers.dev';
-  const SITE_ID        = 'tips';
+  const ADMIN_PASSWORD  = "954369";
+  const SAVE_WORKER_URL = 'https://inpock-save.kawoohyun.workers.dev';
+  const TRACKER_URL     = 'https://inpock-tracker.kawoohyun.workers.dev';
+  const SITE_ID         = 'tips';
+  const OG_WORKER_URL   = "";
 
   // ════════════════════════════════════════
   // 상태
   // ════════════════════════════════════════
   let config       = null;
-  let configSha    = null;
-  let imageSha     = null;
   let hasUnsaved   = false;
   let activeMenuId = null;
   let editingId    = null;
 
   let pendingProfileBase64 = null;
-  const pendingThumbs = new Map(); // linkId → {base64, ext}
+  const pendingThumbs = new Map();
 
   // ════════════════════════════════════════
   // 인증
@@ -449,35 +420,10 @@
     const val = document.getElementById('pw-input').value;
     if (val === ADMIN_PASSWORD) {
       document.getElementById('pw-err').style.display = 'none';
-      const token = localStorage.getItem('gh_token');
-      if (token) loadAdmin();
-      else showScreen('token');
+      loadAdmin();
     } else {
       document.getElementById('pw-err').style.display = 'block';
     }
-  }
-
-  async function saveToken() {
-    const token = document.getElementById('token-input').value.trim();
-    if (!token) return;
-    const btn = document.getElementById('token-btn');
-    btn.innerHTML = '<span class="spinner"></span>확인 중...';
-    btn.disabled = true;
-    document.getElementById('token-err').style.display = 'none';
-    const ok = await verifyToken(token);
-    btn.innerHTML = '연결하기';
-    btn.disabled = false;
-    if (!ok) { document.getElementById('token-err').style.display = 'block'; return; }
-    localStorage.setItem('gh_token', token);
-    loadAdmin();
-  }
-
-  async function verifyToken(token) {
-    try {
-      const r = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`,
-        { headers: { Authorization: `Bearer ${token}` } });
-      return r.ok;
-    } catch { return false; }
   }
 
   function logout() {
@@ -485,16 +431,10 @@
     showScreen('pw');
   }
 
-  function resetToken() {
-    localStorage.removeItem('gh_token');
-    showScreen('pw');
-  }
-
   function showScreen(name) {
-    document.getElementById('screen-pw').style.display    = name === 'pw'    ? 'flex' : 'none';
-    document.getElementById('screen-token').style.display = name === 'token' ? 'flex' : 'none';
-    document.getElementById('page-admin').style.display   = name === 'admin' ? 'block' : 'none';
-    document.getElementById('fab-btn').style.display      = name === 'admin' ? 'flex' : 'none';
+    document.getElementById('screen-pw').style.display  = name === 'pw'    ? 'flex' : 'none';
+    document.getElementById('page-admin').style.display = name === 'admin' ? 'block' : 'none';
+    document.getElementById('fab-btn').style.display    = name === 'admin' ? 'flex' : 'none';
   }
 
   // ════════════════════════════════════════
@@ -509,32 +449,11 @@
   }
 
   async function fetchConfig() {
-    const token = localStorage.getItem('gh_token');
     try {
-      const res = await fetch(
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_PATH}?ref=${GITHUB_BRANCH}`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
-      );
-      if (res.status === 401) {
-        localStorage.removeItem('gh_token');
-        showScreen('token');
-        document.getElementById('token-err').textContent = '토큰이 만료됐거나 권한이 없습니다. 새 토큰을 입력해주세요.';
-        document.getElementById('token-err').style.display = 'block';
-        return;
-      }
-      if (!res.ok) throw new Error(`GitHub API 오류 (${res.status})`);
-      const data = await res.json();
-      if (!data.content) throw new Error('config.json을 찾을 수 없습니다');
-      configSha = data.sha;
+      const res = await fetch('./config.json?t=' + Date.now());
+      if (!res.ok) throw new Error(`config.json 로드 실패 (${res.status})`);
+      config = await res.json();
 
-      // TextDecoder로 UTF-8(한글 포함) 안전 디코딩
-      const bytes = Uint8Array.from(
-        atob(data.content.replace(/\n/g, '')),
-        c => c.charCodeAt(0)
-      );
-      config = JSON.parse(new TextDecoder().decode(bytes));
-
-      // id 없는 링크에 id 부여
       if (!config.links) config.links = [];
       config.links.forEach((l, i) => {
         if (!l.id) l.id = 'link-' + Date.now() + '-' + i;
@@ -543,7 +462,6 @@
       renderProfile();
       renderBlocks();
       populateDesignTab();
-      fetchImageSha(token);
     } catch (e) {
       console.error('config 로드 실패', e);
       document.getElementById('block-list').innerHTML =
@@ -555,21 +473,12 @@
     }
   }
 
-  async function fetchImageSha(token) {
-    try {
-      const r = await fetch(
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${IMAGE_PATH}?ref=${GITHUB_BRANCH}`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
-      );
-      if (r.ok) imageSha = (await r.json()).sha;
-    } catch {}
-  }
 
   // ════════════════════════════════════════
   // 렌더링
   // ════════════════════════════════════════
   function renderProfile() {
-    document.getElementById('prof-name').textContent = config.name || '잇지요 꿀팁';
+    document.getElementById('prof-name').textContent = config.name || '잇지요 꿿팟';
     if (config.profileImage) {
       const av = document.getElementById('prof-av');
       const img = new Image();
@@ -815,8 +724,8 @@
         <div><label class="es-label">설명 (선택)</label>
         <input class="es-input" type="text" id="es-desc" placeholder="설명" value="${escHtml(link.desc||'')}" /></div>
         <div><label class="es-label">카테고리 (선택)</label>
-        <input class="es-input" type="text" id="es-category" placeholder="예: 생활꿀팁, 절약·혜택, 앱추천..." value="${escHtml(link.category||'')}" /></div>
-        <div><label class="es-label">만료일 (선택) — 지난 날짜는 흐리게 표시</label>
+        <input class="es-input" type="text" id="es-category" placeholder="예: 생활꿿팟, 절약·혜택, 앱추천..." value="${escHtml(link.category||'')}" /></div>
+        <div><label class="es-label">만료일 (선택) — 지난 날짜는 흠리게 표시</label>
         <input class="es-input" type="date" id="es-expires" /></div>
         <div><label class="es-label">썸네일</label>
         <div class="es-thumb-row">
@@ -834,7 +743,6 @@
           </div>
         </div></div>`;
 
-      // Populate expires after innerHTML is set
       document.getElementById('es-expires').value = link.expires || '';
     }
 
@@ -981,7 +889,7 @@
     config.youtube2  = document.getElementById('dp-youtube2').value.trim();
     config.ga_id     = document.getElementById('dp-ga-id').value.trim();
     config.email     = document.getElementById('dp-email').value.trim();
-    document.getElementById('prof-name').textContent = config.name || '잇지요 꿀팁';
+    document.getElementById('prof-name').textContent = config.name || '잇지요 꿿팟';
     markUnsaved();
     alert('디자인이 적용됐습니다. 저장 버튼을 눌러 배포하세요.');
   }
@@ -1072,50 +980,34 @@
     const okEl  = document.getElementById('save-ok');
     const errEl = document.getElementById('save-err');
     okEl.style.display = errEl.style.display = 'none';
+
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>저장 중...';
 
-    const token = localStorage.getItem('gh_token');
     try {
-      // 1. 프로필 사진 업로드
-      if (pendingProfileBase64) {
-        const body = { message: 'chore: 프로필 사진 업데이트', content: pendingProfileBase64, branch: GITHUB_BRANCH };
-        if (imageSha) body.sha = imageSha;
-        const r = await ghPut(`contents/${IMAGE_PATH}`, body, token);
-        if (!r.ok) throw new Error('프로필 사진 업로드 실패');
-        imageSha = (await r.json()).content.sha;
-        pendingProfileBase64 = null;
+      const body = { password: ADMIN_PASSWORD, site: SITE_ID, config };
+      if (pendingProfileBase64) body.profileImage = { base64: pendingProfileBase64 };
+      if (pendingThumbs.size > 0) {
+        body.thumbs = {};
+        for (const [id, data] of pendingThumbs) body.thumbs[id] = data;
       }
 
-      // 2. 썸네일 업로드
-      for (const [linkId, { base64, ext }] of pendingThumbs.entries()) {
-        const path = `images/thumb-${linkId}.${ext}`;
-        let sha;
-        try {
-          const chk = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
-            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
-          );
-          if (chk.ok) sha = (await chk.json()).sha;
-        } catch {}
-        const body = { message: 'chore: 링크 썸네일 업로드', content: base64, branch: GITHUB_BRANCH };
-        if (sha) body.sha = sha;
-        const r = await ghPut(`contents/${path}`, body, token);
-        if (!r.ok) throw new Error('썸네일 업로드 실패');
-        const link = config.links.find(l => l.id === linkId);
-        if (link) link.thumbnail = path;
-        pendingThumbs.delete(linkId);
+      const res  = await fetch(SAVE_WORKER_URL + '/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '저장 실패');
+
+      if (data.thumbUrls) {
+        for (const [id, url] of Object.entries(data.thumbUrls)) {
+          const link = config.links.find(l => l.id === id);
+          if (link) link.thumbnail = url;
+        }
       }
-
-      // 3. config.json 저장
-      const json = JSON.stringify(config, null, 2);
-      const b64  = btoa(unescape(encodeURIComponent(json)));
-      const cfgBody = { message: 'chore: 관리자 페이지에서 콘텐츠 업데이트', content: b64, branch: GITHUB_BRANCH };
-      if (configSha) cfgBody.sha = configSha;
-      const r = await ghPut(`contents/${CONFIG_PATH}`, cfgBody, token);
-      if (!r.ok) throw new Error('설정 저장 실패');
-      configSha = (await r.json()).content.sha;
-
+      pendingProfileBase64 = null;
+      pendingThumbs.clear();
       hasUnsaved = false;
       renderBlocks();
       okEl.textContent = '✅ 저장 완료! 약 1분 후 반영됩니다.';
@@ -1128,14 +1020,6 @@
       btn.innerHTML = '저장하기 (자동 배포)';
       btn.classList.remove('unsaved');
     }
-  }
-
-  function ghPut(path, body, token) {
-    return fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/${path}`, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
-      body: JSON.stringify(body),
-    });
   }
 
   // ════════════════════════════════════════
