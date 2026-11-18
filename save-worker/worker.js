@@ -91,7 +91,7 @@ async function ghUpload(owner, repo, path, base64, token, branch, message) {
   try {
     const r = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'User-Agent': 'inpock-save' } }
     );
     if (r.ok) sha = (await r.json()).sha;
   } catch {}
@@ -107,6 +107,7 @@ async function ghUpload(owner, repo, path, base64, token, branch, message) {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
         Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'inpock-save',
       },
       body: JSON.stringify(body),
     }
