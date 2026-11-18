@@ -8,9 +8,9 @@
  */
 
 const SITE_MAP = {
-  inpock: { owner: 'itzyo-planner', repo: 'inpock',       branch: 'main' },
-  recipe: { owner: 'itzyo-planner', repo: 'itzyo-recipe',  branch: 'main' },
-  tips:   { owner: 'itzyo-planner', repo: 'itzyo-tips',    branch: 'main' },
+  inpock: { owner: 'itzyo-planner', repo: 'inpock' },
+  recipe: { owner: 'itzyo-planner', repo: 'itzyo-recipe' },
+  tips:   { owner: 'itzyo-planner', repo: 'itzyo-tips' },
 };
 
 const CORS = {
@@ -52,7 +52,8 @@ async function handleSave(request, env) {
   const siteInfo = SITE_MAP[site];
   if (!siteInfo) return json({ error: '알 수 없는 사이트: ' + site }, 400);
 
-  const { owner, repo, branch } = siteInfo;
+  const { owner, repo } = siteInfo;
+  const branch = undefined; // 기본 브랜치 사용
   const token = env.GH_TOKEN;
 
   if (!token) return json({ error: 'GH_TOKEN 환경변수가 설정되지 않았습니다' }, 500);
@@ -90,13 +91,13 @@ async function ghUpload(owner, repo, path, base64, token, branch, message) {
   let sha;
   try {
     const r = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
+      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
       { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'User-Agent': 'inpock-save' } }
     );
     if (r.ok) sha = (await r.json()).sha;
   } catch {}
 
-  const body = { message, content: base64, branch };
+  const body = { message, content: base64 };
   if (sha) body.sha = sha;
 
   const r = await fetch(
