@@ -203,13 +203,17 @@
 
     function renderFiltered() {
       const q = searchQuery.toLowerCase().trim();
-      const isNumQuery = /^\d+$/.test(q);
+      const numMatch = q.match(/\d+/);
+      const pureNum = numMatch ? numMatch[0] : null;
+      const isNumQuery = /^[#\s]*\d+\s*번?$/.test(q);
+
       const filtered = allLinks.filter(l => {
         if (l.enabled === false) return false;
         if (directNum) return String(l.num) === String(directNum);
         if (activeCategory !== '전체' && l.category !== activeCategory) return false;
         if (q) {
-          if (isNumQuery) return String(l.num || '').includes(q);
+          if (isNumQuery && pureNum && String(l.num || '') === pureNum) return true;
+          if (isNumQuery && pureNum && String(l.num || '').includes(pureNum)) return true;
           if (!(l.title||'').toLowerCase().includes(q) && !(l.desc||'').toLowerCase().includes(q)) return false;
         }
         return true;
