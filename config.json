@@ -7,6 +7,61 @@
   "ga_id": "G-P5G7Y2WVKC",
   "links": [
     {
+      "id": "link-1795036455995-0",
+      "type": "link",
+      "title": "다룸 스마트 자동센서 미니 쓰레기통 10L",
+      "desc": "모션 감지 자동 오픈 & 냄새 차단 밀폐 휴지통",
+      "url": "https://www.coupang.com/vp/products/9352340487?itemId=27745208848",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/640x640ex/image/retail/images/492711453715671-aa110b6d-1b79-4897-8734-2829d224f338.jpg",
+      "enabled": true,
+      "num": 76,
+      "category": "생활용품"
+    },
+    {
+      "id": "link-1795036455995-1",
+      "type": "link",
+      "title": "슈얼리 얼리체크 프라임 임신테스트기",
+      "desc": "생리 예정일 4~5일 전 빠른 확인 고감도 임테기",
+      "url": "https://www.coupang.com/vp/products/8239069494?itemId=23712078194",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/640x640ex/image/retail/images/266235630760361-1d9030d5-34fd-46fb-bae4-60b1649648e0.jpg",
+      "enabled": true,
+      "num": 77,
+      "category": "생활용품"
+    },
+    {
+      "id": "link-1795036455995-2",
+      "type": "link",
+      "title": "뉴트로지나 인텐스 리페어 시카 에멀젼 바디로션",
+      "desc": "극건성 피부용 72시간 깊은 보습 & 진정 시카 에멀젼",
+      "url": "https://www.coupang.com/vp/products/7614117157?itemId=24186934636",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/640x640ex/image/vendor_inventory/f93d/b7304769e0bc2acd3445384af83416b9ecd400b8024d58bf7cc940c8adba.jpg",
+      "enabled": true,
+      "num": 78,
+      "category": "바디관리"
+    },
+    {
+      "id": "link-1795036455995-3",
+      "type": "link",
+      "title": "센텔리안24 마데카크림 타이트 리프팅",
+      "desc": "동국제약 핵심 탄력 리프팅 & 피부 진정 안티에이징",
+      "url": "https://www.coupang.com/vp/products/8734489525?itemId=27631849009",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/640x640ex/image/vendor_inventory/2668/067d164d4ab2c75e28ecf743f350ab0c4eb43e9f86e4fa2d220ad916fe4f.jpg",
+      "enabled": true,
+      "num": 79,
+      "category": "뷰티"
+    },
+    {
+      "id": "link-1795036455995-4",
+      "type": "link",
+      "title": "끌리젠 가열식 올스텐 대용량 가습기",
+      "desc": "100도 가열 살균 올스텐 안심 대용량 6L 가습기",
+      "url": "https://www.coupang.com/vp/products/8389643072?itemId=24250480043",
+      "thumbnail": "https://thumbnail.coupangcdn.com/thumbnails/remote/640x640ex/image/retail/images/2025/08/08/14/6/d1ad91ab-0ba2-41c2-8f53-665386b28504.jpg",
+      "enabled": true,
+      "num": 80,
+      "category": "생활용품"
+    },
+    {
       "title": "쿠팡파트너스",
       "desc": "추천 상품 모음",
       "url": "https://link.coupang.com/a/ecEPYO",
