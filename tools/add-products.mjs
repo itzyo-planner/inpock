@@ -29,9 +29,9 @@ config.links ||= [];
 const used = new Set(config.links.map(l => Number(l.num)).filter(Boolean));
 const nextNum = () => { let n = 1; while (used.has(n)) n++; used.add(n); return n; };
 
-products.forEach((p, i) => {
+const fresh = products.map((p, i) => {
   if (!p.title || !p.url) throw new Error(`${i + 1}번째 상품에 title, url이 필요합니다.`);
-  config.links.push({
+  return {
     id: `link-${Date.now()}-${i}`,
     type: 'link',
     title: p.title,
@@ -44,8 +44,9 @@ products.forEach((p, i) => {
     ...(p.time ? { time: p.time } : {}),
     ...(p.level ? { level: p.level } : {}),
     ...(p.expires ? { expires: p.expires } : {}),
-  });
+  };
 });
+config.links.unshift(...fresh);
 
 console.log(`기존 ${config.links.length - products.length}개 + 새 ${products.length}개 = ${config.links.length}개`);
 if (flag === '--dry-run') { console.log('(dry-run: 저장하지 않음)'); process.exit(0); }

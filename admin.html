@@ -637,7 +637,7 @@
 
   function addLink() {
     const newLink = { id: 'link-' + Date.now(), type: 'link', title: '', desc: '', url: '', thumbnail: '', enabled: true, num: nextNum() };
-    config.links.push(newLink);
+    config.links.unshift(newLink);
     renderBlocks();
     openEdit(newLink.id);
     markUnsaved();
