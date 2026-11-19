@@ -7,6 +7,17 @@
   "ga_id": "G-P5G7Y2WVKC",
   "links": [
     {
+      "id": "link-1795060951198-0",
+      "type": "link",
+      "title": "바이탈 롤팬 자동회전냄비",
+      "desc": "360도 자동 회전 날개로 기름 튐 없이 고기 굽는 자동회전냄비",
+      "url": "https://www.coupang.com/vp/products/8266336555?itemId=23819134979",
+      "thumbnail": "images/thumb-link-1795060951198-0.jpg",
+      "enabled": true,
+      "num": 81,
+      "category": "주방용품"
+    },
+    {
       "title": "쿠팡파트너스",
       "desc": "추천 상품 모음",
       "url": "https://link.coupang.com/a/ecEPYO",
