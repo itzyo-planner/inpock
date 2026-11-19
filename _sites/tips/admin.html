@@ -448,6 +448,39 @@
     initCFStats();
   }
 
+  const GH_REPO = { inpock: 'itzyo-planner/inpock', recipe: 'itzyo-planner/itzyo-recipe', tips: 'itzyo-planner/itzyo-tips' }[SITE_ID];
+  let knownIds = new Set();
+
+  async function fetchRemoteConfig() {
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/config.json?t=${Date.now()}`, {
+      cache: 'no-store', headers: { Accept: 'application/vnd.github+json' }
+    });
+    if (!r.ok) throw new Error('GitHub ' + r.status);
+    const j = await r.json();
+    const bytes = Uint8Array.from(atob(j.content.replace(/\n/g, '')), c => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  async function loadLatestConfig() {
+    try {
+      return await fetchRemoteConfig();
+    } catch (e) {
+      console.warn('GitHub 최신본을 못 읽어 배포본을 사용합니다', e);
+      const res = await fetch('./config.json?t=' + Date.now());
+      if (!res.ok) throw new Error(`config.json 로드 실패 (${res.status})`);
+      return res.json();
+    }
+  }
+
+  async function assertNoRemoteAdditions() {
+    let remote;
+    try { remote = await fetchRemoteConfig(); } catch { return; }
+    const added = (remote.links || []).filter(l => l.id && !knownIds.has(l.id));
+    if (added.length) {
+      throw new Error(`다른 곳(터미널 등)에서 상품 ${added.length}개가 새로 등록됐어요. 지금 저장하면 사라집니다. 새로고침(Ctrl+Shift+R) 후 다시 수정해 주세요.`);
+    }
+  }
+
   function sortByNum(links) {
     const fixed = links.filter(l => !l.num);
     const numbered = links.filter(l => l.num).sort((a, b) => Number(b.num) - Number(a.num));
@@ -456,12 +489,11 @@
 
   async function fetchConfig() {
     try {
-      const res = await fetch('./config.json?t=' + Date.now());
-      if (!res.ok) throw new Error(`config.json 로드 실패 (${res.status})`);
-      config = await res.json();
+      config = await loadLatestConfig();
 
       if (!config.links) config.links = [];
       config.links = sortByNum(config.links);
+      knownIds = new Set(config.links.map(l => l.id));
       config.links.forEach((l, i) => {
         if (!l.id) l.id = 'link-' + Date.now() + '-' + i;
       });
@@ -989,6 +1021,7 @@
     btn.innerHTML = '<span class="spinner"></span>저장 중...';
 
     try {
+      await assertNoRemoteAdditions();
       const body = { password: ADMIN_PASSWORD, site: SITE_ID, config };
       if (pendingProfileBase64) body.profileImage = { base64: pendingProfileBase64 };
       if (pendingThumbs.size > 0) {
@@ -1013,6 +1046,7 @@
       pendingProfileBase64 = null;
       pendingThumbs.clear();
       hasUnsaved = false;
+      knownIds = new Set(config.links.map(l => l.id));
       renderBlocks();
       okEl.textContent = '✅ 저장 완료! 약 1분 후 반영됩니다.';
       okEl.style.display = 'block';
