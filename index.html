@@ -157,6 +157,7 @@
     }
     function safeUrl(url) {
       if (!url) return '#';
+      if (url.startsWith('images/') || url.startsWith('./') || url.startsWith('/')) return url;
       try { const u = new URL(url); return (u.protocol==='http:'||u.protocol==='https:') ? url : '#'; } catch(e) { return '#'; }
     }
 
