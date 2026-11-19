@@ -28,8 +28,8 @@ if (!res.ok) { console.error('현재 config.json을 가져오지 못했습니다
 const config = await res.json();
 config.links ||= [];
 
-const used = new Set(config.links.map(l => Number(l.num)).filter(Boolean));
-const nextNum = () => { let n = 1; while (used.has(n)) n++; used.add(n); return n; };
+let lastNum = config.links.reduce((m, l) => Math.max(m, Number(l.num) || 0), 0);
+const nextNum = () => ++lastNum;
 
 async function fetchOgImage(pageUrl) {
   try {

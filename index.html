@@ -186,6 +186,12 @@
         </a>`;
     }
 
+    function sortByNum(links) {
+      const fixed = links.filter(l => !l.num);
+      const numbered = links.filter(l => l.num).sort((a, b) => Number(b.num) - Number(a.num));
+      return [...fixed, ...numbered];
+    }
+
     function getCategories() {
       const cats = [];
       allLinks.forEach(l => { if (l.category && !cats.includes(l.category)) cats.push(l.category); });
@@ -273,7 +279,7 @@
         renderSocials(c);
 
         if (Array.isArray(c.links)) {
-          allLinks = c.links;
+          allLinks = sortByNum(c.links);
           if (directNum) {
             document.getElementById('back-btn').style.display = 'block';
           } else {

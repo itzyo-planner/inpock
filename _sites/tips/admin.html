@@ -448,6 +448,12 @@
     initCFStats();
   }
 
+  function sortByNum(links) {
+    const fixed = links.filter(l => !l.num);
+    const numbered = links.filter(l => l.num).sort((a, b) => Number(b.num) - Number(a.num));
+    return [...fixed, ...numbered];
+  }
+
   async function fetchConfig() {
     try {
       const res = await fetch('./config.json?t=' + Date.now());
@@ -455,6 +461,7 @@
       config = await res.json();
 
       if (!config.links) config.links = [];
+      config.links = sortByNum(config.links);
       config.links.forEach((l, i) => {
         if (!l.id) l.id = 'link-' + Date.now() + '-' + i;
       });
@@ -637,10 +644,7 @@
   // 블록 조작
   // ════════════════════════════════════════
   function nextNum() {
-    const nums = new Set(config.links.filter(l => l.num).map(l => Number(l.num)));
-    let n = 1;
-    while (nums.has(n)) n++;
-    return n;
+    return config.links.reduce((m, l) => Math.max(m, Number(l.num) || 0), 0) + 1;
   }
 
   function addLink() {
